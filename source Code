@@ -1,0 +1,3286 @@
+#define GL_SILENCE_DEPRECATION
+#include <GLUT/glut.h>   // #include<windows.h>
+                         //#include <GL/glut.h>   //these 2 library for windows system
+#include <stdio.h>
+#include<math.h>
+
+// Initialization function
+void init(void) {
+    glClearColor(1.0, 1.0, 1.0, 0.0);    // Set display window color to white
+    glMatrixMode(GL_PROJECTION);         // Set projection parameters
+    gluOrtho2D(0.0, 1000.0,0.0, 900.0); // Define the orthographic projection
+}
+
+float shift = 0; // a variable used to move the boat right and left
+float bx = 10;
+int nightMode = 0;
+int moon=0;
+
+/* function to make the user able to deal with the system */
+void key(int key, int x, int y) {
+    switch (key)
+    {
+    case GLUT_KEY_LEFT:
+        shift -= 10;
+        glutPostRedisplay();
+        break;
+    case GLUT_KEY_RIGHT:
+        shift += 10;
+        glutPostRedisplay();
+        break;
+    case 'n':
+        nightMode = !nightMode;
+        glutPostRedisplay();
+        break;
+    case 'm':
+            moon = !moon;
+            glutPostRedisplay();
+            break;
+            
+    }
+}
+
+
+
+void circle(GLfloat rx, GLfloat ry, GLfloat cx, GLfloat cy)
+{
+    glBegin(GL_POLYGON);
+    glVertex2f(cx, cy);
+    for (int i = 0; i <= 360; i++)
+    {
+        float angle = i * 3.1416 / 180;
+        float x = rx * cos(angle);
+        float y = ry * sin(angle);
+        glVertex2f((x + cx), (y + cy));
+    }
+    glEnd();
+}
+void tree(GLfloat rx, GLfloat ry, GLfloat cx, GLfloat cy)
+{
+    glBegin(GL_POLYGON);
+    glVertex2f(cx, cy);
+    for (int i = 225; i <= 315; i++)
+    {
+        float angle = i * 3.1416 / 180;
+        float x = rx * cos(angle);
+        float y = ry * sin(angle);
+        glVertex2f((x + cx), (y + cy));
+    }
+    glEnd();
+}
+
+
+void clouds()
+{
+    glPushMatrix();
+    glTranslatef(bx, 0, 0);
+glColor3f(0.996, 0.973, 0.9022); // 1st cloud
+glBegin(GL_QUADS);
+  glVertex2i(70,700+50);
+  glVertex2i(200,700+50);
+  glVertex2i(200,720+50);
+  glVertex2i(70,720+50);
+glEnd();
+glColor3f(0.996, 0.973, 0.9022);
+ circle(20, 20, 70, 770);
+glColor3f(0.996, 0.973, 0.9022);
+ circle(25, 25, 70+25, 770+15);
+glColor3f(0.996, 0.973, 0.9022);
+ circle(35, 35, 70+25+40, 770+15+12);
+glColor3f(0.996, 0.973, 0.9022);
+ circle(25, 25, 70+25+40+40, 770+15+12-15);
+glColor3f(0.996, 0.973, 0.9022);
+ circle(15, 15, 70+25+40+40+26, 770+15+12-15-16);
+glEnd();
+glColor3f(0.996, 0.973, 0.9022); // 2nd cloud
+glBegin(GL_QUADS);
+  glVertex2i(780+50,680+50);
+  glVertex2i(880+50,680+50);
+  glVertex2i(880+50,700+50);
+  glVertex2i(780+50,700+50);
+glEnd();
+glColor3f(0.996, 0.973, 0.9022);
+ circle(15, 15, 780+50, 745);
+glColor3f(0.996, 0.973, 0.9022);
+ circle(20, 20, 780+22+50, 745+15);
+glColor3f(0.996, 0.973, 0.9022);
+ circle(25, 25, 780+22+22+50, 745+15+14);
+glColor3f(0.996, 0.973, 0.9022);
+ circle(21, 21, 780+22+22+27+50, 745+15+14-16);
+glColor3f(0.996, 0.973, 0.9022);
+ circle(15, 15, 780+22+22+24+26+50, 745+15+14-15-14);
+glEnd();
+
+glColor3f(0.996, 0.973, 0.9022); // 1nst small cloud
+glBegin(GL_QUADS);
+  glVertex2i(370,670+50);
+  glVertex2i(420,670+50);
+  glVertex2i(420,685+50);
+  glVertex2i(370,685+50);
+glEnd();
+glColor3f(0.996, 0.973, 0.9022);
+ circle(7.5, 7.5, 370.5, 727.5);
+glColor3f(0.996, 0.973, 0.9022);
+ circle(7.5, 7.5, 370.5+50, 727.5);
+glColor3f(0.996, 0.973, 0.9022);
+ circle(18, 18, 395, 739);
+glColor3f(0.996, 0.973, 0.9022);
+glBegin(GL_QUADS);
+  glVertex2i(370+260,670+50-20);
+  glVertex2i(420+260,670+50-20);
+  glVertex2i(420+260,685+50-20);
+  glVertex2i(370+260,685+50-20);
+glEnd();
+glColor3f(0.996, 0.973, 0.9022);
+ circle(7.5, 7.5, 370.5+260, 727.5-20);
+glColor3f(0.996, 0.973, 0.9022);
+ circle(7.5, 7.5, 370.5+50+260, 727.5-20);
+glColor3f(0.996, 0.973, 0.9022);
+ circle(18, 18, 395+260, 739-20);
+glEnd();
+    glPopMatrix();
+    bx += .2;
+    if (bx > 1000)
+        bx = -1000;
+    glutPostRedisplay();
+
+}
+
+float cx=10;
+void car()
+{
+    glPushMatrix();
+    glTranslatef(cx, 0, 0);
+glColor3f(0, 0.282, 0.831);  // CAR
+glBegin(GL_POLYGON);
+  glVertex2i(63,260+10);
+  glVertex2i(155,260+10);
+  glVertex2i(145,280+10);
+  glVertex2i(130,280+10);
+  glVertex2i(120,290+10);
+  glVertex2i(90,290+10);
+  glVertex2i(80,280+10);
+  glVertex2i(63,280+10);
+glEnd();
+
+glColor3f(0.737, 0.89, 0.894); // car
+glBegin(GL_QUADS);
+  glVertex2i(82,280+10);
+  glVertex2i(130-2,280+10);
+  glVertex2i(120-2,290+10-2);
+  glVertex2i(90+2,290+10-2);
+glEnd();
+
+glLineWidth(2.0f);
+glColor3f(0, 0, 0);  // car
+glBegin(GL_LINES);
+  glVertex2i(105,270);
+  glVertex2i(105,300);
+glEnd();
+glLineWidth(1.0f);
+glColor3f(0, 0, 0);  // car
+glBegin(GL_LINES);
+  glVertex2i(80,290);
+  glVertex2i(130,290);
+glEnd();
+
+glColor3f(0.278, 0.278, 0.267);
+ circle(10, 10, 80, 270);
+
+glColor3f(0.878, 0.875, 0.878);
+ circle(5, 5, 80, 270);
+
+glColor3f(0.278, 0.278, 0.267);  //car wheel
+ circle(10, 10, 80+50, 270);
+
+glColor3f(0.878, 0.875, 0.878);
+ circle(5, 5, 80+50, 270);
+glEnd();
+    glPopMatrix();
+    cx += 1;
+    if (cx > 1000)
+        cx = -150;
+    glutPostRedisplay();
+
+}
+float ax=10 ;
+void car2()
+{
+    glPushMatrix();
+    glTranslatef(-ax, 0, 0);
+glColor3f(0.961, 0.945, 0.91);  // ambulence
+glBegin(GL_POLYGON);
+  glVertex2i(640,200);
+  glVertex2i(740,200);
+  glVertex2i(740,240);
+  glVertex2i(665,240);
+  glVertex2i(655,225);
+  glVertex2i(640,220);
+glEnd();
+glColor3f(0, 0.749, 0.82); //ambulence
+glBegin(GL_POLYGON);
+glVertex2i(655,225);
+  glVertex2i(680,225);
+  glVertex2i(680,240-2);
+glVertex2i(665-1,240-2);
+glEnd();
+  glLineWidth(4.0f);
+  glColor3f(0.929, 0.031, 0.18);  // ambulance
+  glBegin(GL_LINES);
+    glVertex2i(640,215);
+    glVertex2i(740,215);
+glEnd();
+glLineWidth(6.0f);
+glColor3f(0.929, 0.031, 0.18);  //ambulance
+glBegin(GL_LINES);
+  glVertex2i(711+.10,220+8);
+  glVertex2i(725+.10,220+8);
+ glVertex2i(725-7,240-4);
+ glVertex2i(725-7,225-4);
+glEnd();
+glColor3f(0.278, 0.278, 0.267);
+ circle(10, 10, 660, 200);
+
+glColor3f(0.878, 0.875, 0.878);  //ambulance wheel
+ circle(5, 5, 660, 200);
+
+glColor3f(0.278, 0.278, 0.267);
+ circle(10, 10, 670+45, 200);
+
+glColor3f(0.878, 0.875, 0.878);  //ambulance wheel
+ circle(5, 5, 670+45, 200);
+glEnd();
+    glPopMatrix();
+    ax += 1;
+    if (ax > 800)
+        ax = -400;
+    glutPostRedisplay();
+
+}
+float dx=10;
+void chimni()
+{
+    glPushMatrix();
+    glTranslatef(dx, dx,0);
+glColor3f(1, 0.965, 0.86);      // chimni cloud 1
+ circle(20, 20,230+5, 600+22);
+    glPopMatrix();
+    dx += .07;
+    if (dx > 10)
+        dx = -3;
+    glutPostRedisplay();
+
+}
+
+float ex=10;
+void chimni1()
+{
+    glPushMatrix();
+    glTranslatef(ex, ex, 0);
+    glColor3f(1, 0.965, 0.86);      // chimni cloud 2
+     circle(17, 17,230+5+20, 600+22+20);
+
+    glPopMatrix();
+    ex += .06;
+    if (ex > 11)
+        ex = -05;
+    glutPostRedisplay();
+
+}
+
+float fx=10;
+void chimni2()
+{
+    glPushMatrix();
+    glTranslatef(fx, fx, 0);
+    glColor3f(1, 0.965, 0.86);      // chimni cloud 3
+     circle(7, 7,230+5+20+21, 600+22+20+21);
+    glPopMatrix();
+    fx += .09;
+    if (fx > 12)
+        fx = -5;
+    glutPostRedisplay();
+
+}
+
+
+
+void drawShapes(void) {
+    if(moon){
+        glClear(GL_COLOR_BUFFER_BIT);
+        glPointSize(10.0);
+        glColor3f(0.149, 0.514, 0.569);  // Water
+        glBegin(GL_QUADS);
+        glVertex2i(0,0);
+        glVertex2i(1000,0);
+        glVertex2i(1000,180);
+        glVertex2i(0,180);
+        glEnd();
+        glColor3f(0.031, 0.027, 0.027);  // Water border
+        glBegin(GL_QUADS);
+        glVertex2i(0,170);
+        glVertex2i(1000,170);
+        glVertex2i(1000,180);
+        glVertex2i(0,180);
+        glEnd();
+        
+        
+        glColor3f(0.902, 0.102, 0.302);  // boat
+        glBegin(GL_QUADS);
+        glVertex2i(340+ shift,70);
+        glVertex2i(380+ shift,40);
+        glVertex2i(520+ shift,40);
+        glVertex2i(560+ shift,70);
+        glEnd();
+        glColor3f(0.961, 0.714, 0.133);  // boat
+        glBegin(GL_QUADS);
+        glVertex2i(370+ shift,70);
+        glVertex2i(530+ shift,70);
+        glVertex2i(500+ shift,90);
+        glVertex2i(400+ shift,90);
+        glEnd();
+        glColor3f(0.09, 0.09, 0.086);  // boat
+        glBegin(GL_TRIANGLES);
+        glVertex2i(420+ shift,90);
+        glVertex2i(480+ shift,90);
+        glVertex2i(450+ shift,130);
+        glEnd();
+        glLineWidth(3.0f);
+        glColor3f(0.122, 0.122, 0.11);  // boat
+        glBegin(GL_LINES);
+        glVertex2i(450+ shift,130);
+        glVertex2i(450+ shift,150);
+        glEnd();
+        glColor3f(0.024, 0.58, 0.106);  // boat
+        glBegin(GL_TRIANGLES);
+        glVertex2i(450+ shift,150);
+        glVertex2i(450+ shift,140);
+        glVertex2i(465+ shift,145);
+        glEnd();
+        
+        glColor3f(0.875, 0.957, 0.961);
+        circle(6, 6, 450+ shift, 80);
+        glColor3f(0.875, 0.957, 0.961);
+        circle(6, 6, 450+40+ shift, 80);
+        glColor3f(0.875, 0.957, 0.961);
+        circle(6, 6, 450-40+ shift, 80);
+        glEnd();
+        
+        
+        
+        
+        
+        glColor3f(0.122, 0.353, 0.471);  // road
+        glBegin(GL_QUADS);
+        glVertex2i(0,180);
+        glVertex2i(1000,180);
+        glVertex2i(1000,310);
+        glVertex2i(0,310);
+        glEnd();
+        glColor3f(0.722, 0.518, 0.416);  // road border
+        glBegin(GL_QUADS);
+        glVertex2i(0,310);
+        glVertex2i(1000,310);
+        glVertex2i(1000,320);
+        glVertex2i(0,320);
+        glEnd();
+        
+        
+        glColor3f(0.616, 0.922, 0.914);
+        for (int x = 30; x <= 1200; x += 70) {
+            glBegin(GL_QUADS);
+            glVertex2i(x, 240);
+            glVertex2i(x + 70, 240);      // zebra cross
+            glVertex2i(x + 70, 250);
+            glVertex2i(x, 250);
+            x= x+70;
+            glEnd();
+        }
+        
+        
+        glColor3f(0.671, 0.631, 0.549);  // footpath
+        glBegin(GL_QUADS);
+        glVertex2i(0,320);
+        glVertex2i(1000,320);
+        glVertex2i(1000,380);
+        glVertex2i(0,380);
+        glEnd();
+        
+        
+        for (int x = 80; x <= 400; x += 70) {
+            glLineWidth(3.0f);
+            glColor3f(0.02, 0.016, 0);  // footpath line
+            glBegin(GL_LINES);
+            glVertex2i(x, 310);
+            glVertex2i(x, 320);
+            glEnd();
+            
+            glLineWidth(4.0f);
+            glColor3f(0.639, 0.459, 0.337);  // footpath line
+            glBegin(GL_LINES);
+            glVertex2i(x, 320);
+            glVertex2i(x + 20, 380);
+            glEnd();
+        }
+        
+        
+        for (int x = 700; x <= 1100; x += 70) {
+            glLineWidth(3.0f);
+            glColor3f(0.02, 0.016, 0);  // footpath line
+            glBegin(GL_LINES);
+            glVertex2i(x, 310);
+            glVertex2i(x, 320);
+            glEnd();
+            
+            glLineWidth(4.0f);
+            glColor3f(0.639, 0.459, 0.337);  // footpath line
+            glBegin(GL_LINES);
+            glVertex2i(x, 320);
+            glVertex2i(x - 20, 380);
+            glEnd();
+        }
+        
+        
+        
+        
+        
+        glColor3f(0.114, 0.353, 0.467); // sky
+        glBegin(GL_QUADS);
+        glVertex2i(0,380);
+        glVertex2i(1000,380);
+        glVertex2i(1000,900);
+        glVertex2i(0,900);
+        glEnd();
+        
+        glColor3f(0.267, 0.439, 0.533); // backround
+        glBegin(GL_QUADS);
+        glVertex2i(480,380);
+        glVertex2i(510,380);
+        glVertex2i(510,450);
+        glVertex2i(460,450);
+        glEnd();
+        glColor3f(0.267, 0.439, 0.533); // backround
+        glBegin(GL_QUADS);
+        glVertex2i(590,450);
+        glVertex2i(600,380);
+        glVertex2i(670,380);
+        glVertex2i(670,450);
+        glEnd();
+        
+        
+        glColor3f(0.984, 1, 0.745);  //moon
+        circle(52, 55, 550, 830);
+        glEnd();
+        glColor3f(0.835, 0.839, 0.765);  //moon
+        circle(10, 10, 538-15, 840+10);
+        glEnd();
+        glColor3f(0.835, 0.839, 0.765);  //moon
+        circle(7, 7, 538-25, 825);
+        glEnd();
+        glColor3f(0.835, 0.839, 0.765);  //moon
+        circle(4, 4, 538, 828);
+        glEnd();
+        glColor3f(0.835, 0.839, 0.765);  //moon
+        circle(12, 12, 538+38, 815);
+        glEnd();
+        glColor3f(0.835, 0.839, 0.765);  //moon
+      //  circle(5, 5, 538+30, 800-9);
+        glEnd();
+        
+        clouds();    //clouds
+        
+        
+        
+        glColor3f(0.612, 0.388, 0);
+        glBegin(GL_QUADS);
+        glVertex2i(84-20,380);
+        glVertex2i(100-20,380);  //tree 1
+        glVertex2i(100-20,450);
+        glVertex2i(84-20,450);
+        glEnd();
+        glColor3f(0.02, 0.561, 0.02);
+        tree(90, 40, 72, 500-20-10);
+        glColor3f(0.02, 0.561, 0.02);
+        tree(70, 40, 72, 500-20+25-10);
+        glColor3f(0.02, 0.561, 0.02);
+        tree(55, 40, 72, 500-20+25+24-10);
+        glEnd();
+        
+        glColor3f(0.612, 0.388, 0);
+        glBegin(GL_QUADS);
+        glVertex2i(84-20+900,380);
+        glVertex2i(100-20+900,380);  //tree 2
+        glVertex2i(100-20+900,450);
+        glVertex2i(84-20+900,450);
+        glEnd();
+        glColor3f(0.02, 0.561, 0.02);
+        tree(90, 50, 72+900, 500-20);
+        glColor3f(0.02, 0.561, 0.02);
+        tree(73, 40, 72+900, 500-20+25);
+        glColor3f(0.02, 0.561, 0.02);
+        tree(55, 40, 72+900, 500-20+25+25);
+        glColor3f(0.02, 0.561, 0.02);
+        tree(35, 25, 72+900, 500-20+25+24+13);
+        glEnd();
+        
+        
+        glLineWidth(5.0f);
+        glColor3f(0.02, 0.016, 0);  // traffic light
+        glBegin(GL_LINES);
+        glVertex2i(20,330);
+        glVertex2i(34,330);
+        glEnd();
+        glLineWidth(5.0f);
+        glColor3f(0.02, 0.016, 0);  // traffic light
+        glBegin(GL_LINES);
+        glVertex2i(27,330);
+        glVertex2i(27,430);
+        glEnd();
+        glColor3f(0.275, 0.298, 0.302);  // traffic
+        glBegin(GL_QUADS);
+        glVertex2i(15,430);
+        glVertex2i(39,430);
+        glVertex2i(39,490);
+        glVertex2i(15,490);
+        glEnd();
+        glColor3f(0, 0.671, 0.016);
+        circle(7, 7, 30-3, 440+2);
+        
+        glColor3f(0.965, 1, 0);      // traffic
+        circle(7, 7, 30-3, 440+2+18);
+        
+        glColor3f( 1, 0, 0.122);      // traffic
+        circle(7, 7, 30-3, 440+20+18);
+        glEnd();
+        
+        
+        
+        glLineWidth(5.0f);
+        glColor3f(0.49, 0.482, 0.475);  // road light
+        glBegin(GL_LINES);
+        glVertex2i(50+10,380);
+        glVertex2i(50+10,500);
+        
+        glVertex2i(50-2+10,500);
+        glVertex2i(100+10+10,500);
+        glEnd();
+        
+        glColor3ub(255, 215, 0);
+        circle(15, 7, 100+5, 500-5);
+        glLineWidth(8.0f);
+        glColor3f(0.031, 0.031, 0.0316);  // road light
+        glBegin(GL_LINES);
+        glVertex2i(90,500-.5);
+        glVertex2i(120,500-.5);
+        glEnd();
+        
+        
+        
+        
+        glLineWidth(4.0f);
+        glColor3f(0.4, 0.384, 0.376);  // bench leg
+        glBegin(GL_LINES);
+        glVertex2i(73,355);
+        glVertex2i(73,365);
+        
+        glVertex2i(73+10,355+5);
+        glVertex2i(73+10,365+5);
+        
+        glVertex2i(73+55,355+2);
+        glVertex2i(73+55,365+2);
+        
+        glVertex2i(73+64,355+12);
+        glVertex2i(73+64,365+12);
+        glEnd();
+        
+        glColor3f(0.69, 0.369, 0.173); // bench
+        glBegin(GL_QUADS);
+        glVertex2i(70,365);
+        glVertex2i(130,365);
+        glVertex2i(140,380);
+        glVertex2i(80,380);
+        glEnd();
+        glLineWidth(3.0f);
+        glColor3f(0.69, 0.369, 0.173);  // bench
+        glBegin(GL_LINES);
+        glVertex2i(80,385-1);
+        glVertex2i(140,385-1);
+        glVertex2i(80,385+5);
+        glVertex2i(140,385+5);
+        glVertex2i(80+2,380);
+        glVertex2i(80+2,395);
+        glVertex2i(80+2+55,380);
+        glVertex2i(80+2+55,395);
+        glEnd();
+        
+        chimni();
+        chimni1();
+        chimni2();
+        
+        glColor3f(0.769, 0.729, 0.604); // house1
+        glBegin(GL_QUADS);
+        glVertex2i(150,380);
+        glVertex2i(270,380);
+        glVertex2i(270,570);
+        glVertex2i(150,570);
+        glEnd();
+        glColor3f(0.769, 0.584, 0.427); // house1
+        glBegin(GL_QUADS);
+        glVertex2i(145,570);
+        glVertex2i(275,570);
+        glVertex2i(275,580);
+        glVertex2i(145,580);
+        glEnd();
+        
+
+        
+        
+        glEnd();
+        
+        glColor3f(0.969, 0.549, 0.353); // house1 chimni
+        glBegin(GL_QUADS);
+        glVertex2i(220,580);
+        glVertex2i(250,580);
+        glVertex2i(250,600);
+        glVertex2i(220,600);
+        glEnd();
+        glColor3f(0.969, 0.827, 0.58); // house1 chimni
+        glBegin(GL_QUADS);
+        glVertex2i(215,600);
+        glVertex2i(255,600);
+        glVertex2i(255,610);
+        glVertex2i(215,610);
+        glEnd();
+        glColor3f(0.976, 0.984, 0.639); // house1 door
+        glBegin(GL_QUADS);
+        glVertex2i(190,380);
+        glVertex2i(230,380);
+        glVertex2i(230,420);
+        glVertex2i(190,420);
+        glEnd();
+        glColor3f(0.941, 0.796, 0.541); // house1 door
+        glBegin(GL_QUADS);
+        glVertex2i(190,380);
+        glVertex2i(230,380);
+        glVertex2i(230,390);
+        glVertex2i(190,390);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);  // h1 door
+        glBegin(GL_LINES);
+        glVertex2i(210,390);
+        glVertex2i(210,420);
+        glEnd();
+        glColor3f(1, 0.553, 0.427); // house1 door
+        glBegin(GL_QUADS);
+        glVertex2i(170,420);
+        glVertex2i(250,420);
+        glVertex2i(250,440+10);
+        glVertex2i(170,440+10);
+        glEnd();
+        glColor3f(0.843, 0.306, 0.94); // house1 door
+        glBegin(GL_QUADS);
+        glVertex2i(170,420);
+        glVertex2i(180,420);
+        glVertex2i(180,440+10);
+        glVertex2i(170,440+10);
+        glEnd();
+        glColor3f(0.988, 0.929, 0.388); // house1 door
+        glBegin(GL_QUADS);
+        glVertex2i(170+20,420);
+        glVertex2i(180+20,420);
+        glVertex2i(180+20,440+10);
+        glVertex2i(170+20,440+10);
+        glEnd();
+        glColor3f(0.843, 0.306, 0.94); // house1 door
+        glBegin(GL_QUADS);
+        glVertex2i(170+40,420);
+        glVertex2i(180+40,420);
+        glVertex2i(180+40,440+10);
+        glVertex2i(170+40,440+10);
+        glEnd();
+        glColor3f(0.969, 0.725, 0.333); // house1 door
+        glBegin(GL_QUADS);
+        glVertex2i(170+20+40,420);
+        glVertex2i(180+20+40,420);
+        glVertex2i(180+20+40,440+10);
+        glVertex2i(170+20+40,440+10);
+        glEnd();
+        
+        glColor3f(0.976, 0.898, 0.439); // house1 left window
+        glBegin(GL_QUADS);
+        glVertex2i(170,450+15);
+        glVertex2i(200,450+15);
+        glVertex2i(200,480+15);
+        glVertex2i(170,480+15);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);  // h1 window line
+        glBegin(GL_LINES);
+        glVertex2i(185,450+15);
+        glVertex2i(185,480+15);
+        glVertex2i(170,465+15);
+        glVertex2i(200,465+15);
+        glEnd();
+        glColor3f(0.976, 0.898, 0.439);// house1 left window
+        glBegin(GL_QUADS);
+        glVertex2i(170,500+15);
+        glVertex2i(200,500+15);
+        glVertex2i(200,530+15);
+        glVertex2i(170,530+15);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h1 window line
+        glBegin(GL_LINES);
+        glVertex2i(185,500+15);
+        glVertex2i(185,530+15);
+        glVertex2i(170,515+15);
+        glVertex2i(200,515+15);
+        glEnd();
+        
+        
+        
+        glColor3f(0.976, 0.898, 0.439); // house1 right window
+        glBegin(GL_QUADS);
+        glVertex2i(220,450+15);
+        glVertex2i(250,450+15);
+        glVertex2i(250,480+15);
+        glVertex2i(220,480+15);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);  // h1 window line
+        glBegin(GL_LINES);
+        glVertex2i(235,450+15);
+        glVertex2i(235,480+15);
+        glVertex2i(220,465+15);
+        glVertex2i(250,465+15);
+        glEnd();
+        glColor3f(0.976, 0.898, 0.439);// house1 right window
+        glBegin(GL_QUADS);
+        glVertex2i(220,515);
+        glVertex2i(250,515);
+        glVertex2i(250,545);
+        glVertex2i(220,545);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h1 window line
+        glBegin(GL_LINES);
+        glVertex2i(235,515);
+        glVertex2i(235,545);
+        glVertex2i(220,530);
+        glVertex2i(250,530);
+        glEnd();
+        
+        
+        
+        
+        
+        glColor3f(0.89, 0.702, 0.459); // house2
+        glBegin(GL_QUADS);
+        glVertex2i(270,380);
+        glVertex2i(380,380);
+        glVertex2i(380,500);
+        glVertex2i(270,500);
+        glEnd();
+        glColor3f(0.902, 0.396, 0.255); // house2 roof
+        glBegin(GL_QUADS);
+        glVertex2i(270,500);
+        glVertex2i(380,500);
+        glVertex2i(380,510);
+        glVertex2i(270,510);
+        glEnd();
+        glColor3f(0.965, 0.898, 0.514); // house2 door glass
+        glBegin(GL_QUADS);
+        glVertex2i(300,380);
+        glVertex2i(350,380);
+        glVertex2i(350,420);
+        glVertex2i(300,420);
+        glEnd();
+        glColor3f(0.859, 0.443, 0.38); // house2 door
+        glBegin(GL_QUADS);
+        glVertex2i(300,380);
+        glVertex2i(350,380);
+        glVertex2i(350,390);
+        glVertex2i(300,390);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h2 door line
+        glBegin(GL_LINES);
+        glVertex2i(325,390);
+        glVertex2i(325,420);
+        glEnd();
+        glColor3f(0.859, 0.443, 0.38); // house2 door
+        glBegin(GL_QUADS);
+        glVertex2i(280,420);
+        glVertex2i(370,420);
+        glVertex2i(360,450);
+        glVertex2i(290,450);
+        glEnd();
+        glColor3f(0.976, 0.898, 0.439); // house2 left window glass clr
+        glBegin(GL_QUADS);
+        glVertex2i(280,460);
+        glVertex2i(320,460);
+        glVertex2i(320,475);
+        glVertex2i(280,475);
+        glEnd();
+        glColor3f(0.976, 0.898, 0.439); // house2 window right glass clr
+        glBegin(GL_QUADS);
+        glVertex2i(280+50,460);
+        glVertex2i(320+50,460);
+        glVertex2i(320+50,475);
+        glVertex2i(280+50,475);
+        glEnd();
+        glColor3f(0.996, 0.957, 0.651); // house2 left window  white clr
+        glBegin(GL_QUADS);
+        glVertex2i(280,475);
+        glVertex2i(320,475);
+        glVertex2i(320,490);
+        glVertex2i(280,490);
+        glEnd();
+        glColor3f(0.996, 0.957, 0.651); // house2 right window  white clr
+        glBegin(GL_QUADS);
+        glVertex2i(280+50,475);
+        glVertex2i(320+50,475);
+        glVertex2i(320+50,490);
+        glVertex2i(280+50,490);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h2 left window line
+        glBegin(GL_LINES);
+        glVertex2i(300,460);
+        glVertex2i(300,490);
+        glVertex2i(280,475);
+        glVertex2i(320,475);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h2 left window line
+        glBegin(GL_LINES);
+        glVertex2i(300+50,460);
+        glVertex2i(300+50,490);
+        glVertex2i(280+50,475);
+        glVertex2i(320+50,475);
+        glEnd();
+        
+        
+        
+        
+        
+        
+        glColor3f(0.859, 0.31, 0.467); // house3
+        glBegin(GL_QUADS);
+        glVertex2i(380,380);
+        glVertex2i(500,380);
+        glVertex2i(500,600);
+        glVertex2i(380,600);
+        glEnd();
+        glColor3f(0.89, 0.494, 0.361); // house3 roof
+        glBegin(GL_QUADS);
+        glVertex2i(375,590);
+        glVertex2i(505,590);
+        glVertex2i(505,600);
+        glVertex2i(375,600);
+        glEnd();
+        glColor3f(0.976, 0.984, 0.592); // house3 door
+        glBegin(GL_QUADS);
+        glVertex2i(420,380);
+        glVertex2i(460,380);
+        glVertex2i(460,430);
+        glVertex2i(420,430);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h3 door line
+        glBegin(GL_LINES);
+        glVertex2i(440,380);
+        glVertex2i(440,430);
+        glEnd();
+        glColor3f(0.89, 0.494, 0.361); // house3 door board
+        glBegin(GL_QUADS);
+        glVertex2i(400,430);
+        glVertex2i(480,430);
+        glVertex2i(480,460);
+        glVertex2i(400,460);
+        glEnd();
+        glColor3f(01, 0.957, 0.608); // house3 left glass
+        glBegin(GL_QUADS);
+        glVertex2i(400,480);
+        glVertex2i(430,480);
+        glVertex2i(430,510);
+        glVertex2i(400,510);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h3 door line
+        glBegin(GL_LINES);
+        glVertex2i(415,480);
+        glVertex2i(415,510);
+        glVertex2i(400,495);
+        glVertex2i(430,495);
+        glEnd();
+        
+        glColor3f(1, 0.957, 0.608); // house3 left glass
+        glBegin(GL_QUADS);
+        glVertex2i(400,480+50);
+        glVertex2i(430,480+50);
+        glVertex2i(430,510+50);
+        glVertex2i(400,510+50);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h3 door line
+        glBegin(GL_LINES);
+        glVertex2i(415,480+50);
+        glVertex2i(415,510+50);
+        glVertex2i(400,495+50);
+        glVertex2i(430,495+50);
+        glEnd();
+        
+        glColor3f(1, 0.957, 0.608); // house3 right glass
+        glBegin(GL_QUADS);
+        glVertex2i(450,480);
+        glVertex2i(480,480);
+        glVertex2i(480,510);
+        glVertex2i(450,510);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h3 left line
+        glBegin(GL_LINES);
+        glVertex2i(465,480);
+        glVertex2i(465,510);
+        glVertex2i(450,495);
+        glVertex2i(480,495);
+        glEnd();
+        glColor3f(1, 0.957, 0.608); // house3 right glass
+        glBegin(GL_QUADS);
+        glVertex2i(450,480+50);
+        glVertex2i(480,480+50);
+        glVertex2i(480,510+50);
+        glVertex2i(450,510+50);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h3 left line
+        glBegin(GL_LINES);
+        glVertex2i(465,480+50);
+        glVertex2i(465,510+50);
+        glVertex2i(450,495+50);
+        glVertex2i(480,495+50);
+        glEnd();
+        
+        glColor3f(0.027, 0.518, 0.678); // building shadow
+        glBegin(GL_QUADS);
+        glVertex2i(590, 450);
+        glVertex2i(670, 450);
+        glVertex2i(670, 560+10);
+        glVertex2i(590, 560+10);
+        glEnd();
+        
+        
+        glLineWidth(5.0f);
+        glColor3f(0.02, 0.016, 0);  // traffic light
+        glBegin(GL_LINES);
+        glVertex2i(20+620,330);
+        glVertex2i(34+620,330);
+        glEnd();
+        glLineWidth(5.0f);
+        glColor3f(0.02, 0.016, 0);  // traffic light
+        glBegin(GL_LINES);
+        glVertex2i(27+620,330);
+        glVertex2i(27+620,430);
+        glEnd();
+        glColor3f(0.275, 0.298, 0.302);  // traffic
+        glBegin(GL_QUADS);
+        glVertex2i(15+620,430);
+        glVertex2i(39+620,430);
+        glVertex2i(39+620,490);
+        glVertex2i(15+620,490);
+        glEnd();
+        glColor3f(0, 0.671, 0.016);
+        circle(7, 7, 30-3+620, 440+2);
+        
+        glColor3f(0.965, 1, 0);      // traffic
+        circle(7, 7, 30-3+620, 440+2+18);
+        
+        glColor3f( 1, 0, 0.122);      // traffic
+        circle(7, 7, 30-3+620, 440+20+18);
+        
+        glColor3f(0.275, 0.298, 0.302);  // traffic
+        glBegin(GL_QUADS);
+        glVertex2i(15,430);
+        glVertex2i(39,430);
+        glVertex2i(39,490);
+        glVertex2i(15,490);
+        glEnd();
+        glColor3f(0, 0.671, 0.016);// traffic 1
+        circle(7, 7, 30-3, 440+2);
+        
+        glColor3f(0.965, 1, 0);      // traffic 1
+        circle(7, 7, 30-3, 440+2+18);
+        
+        glColor3f( 1, 0, 0.122);      // traffic 1
+        circle(7, 7, 30-3, 440+20+18);
+        
+        
+        
+        glColor3f(0.722, 0.58, 0.467); // house4
+        glBegin(GL_QUADS);
+        glVertex2i(670, 380);
+        glVertex2i(790, 380);
+        glVertex2i(790, 530);
+        glVertex2i(670, 530);
+        glEnd();
+        glColor3f(0.761, 0.439, 0.38); // house4 roof
+        glBegin(GL_QUADS);
+        glVertex2i(665, 530);
+        glVertex2i(795, 530);
+        glVertex2i(795, 540);
+        glVertex2i(665, 540);
+        glEnd();
+        glColor3f(0.902, 0.827, 0.471); // house4 door
+        glBegin(GL_QUADS);
+        glVertex2i(710, 380);
+        glVertex2i(750, 380);
+        glVertex2i(750, 420);
+        glVertex2i(710, 420);
+        glEnd();
+        glColor3f(0.761, 0.439, 0.38); // house4 door
+        glBegin(GL_QUADS);
+        glVertex2i(710, 380);
+        glVertex2i(750, 380);
+        glVertex2i(750, 390);
+        glVertex2i(710, 390);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h4 door line
+        glBegin(GL_LINES);
+        glVertex2i(730,390);
+        glVertex2i(730,420);
+        glEnd();
+        
+        glColor3f(1, 0.957, 0.608); // house4 left glass
+        glBegin(GL_QUADS);
+        glVertex2i(690, 480);
+        glVertex2i(720, 480);
+        glVertex2i(720, 510);
+        glVertex2i(690, 510);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0); // h4 door line
+        glBegin(GL_LINES);
+        glVertex2i(705, 480);
+        glVertex2i(705, 510);
+        glVertex2i(690, 495);
+        glVertex2i(720, 495);
+        glEnd();
+        
+        glColor3f(1, 0.957, 0.608); // house4 left glass
+        glBegin(GL_QUADS);
+        glVertex2i(690, 480-50);
+        glVertex2i(720, 480-50);
+        glVertex2i(720, 510-50);
+        glVertex2i(690, 510-50);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0); // h4 door line
+        glBegin(GL_LINES);
+        glVertex2i(705, 480-50);
+        glVertex2i(705, 510-50);
+        glVertex2i(690, 495-50);
+        glVertex2i(720, 495-50);
+        glEnd();
+        
+        glColor3f(1, 0.957, 0.608); // house4 right glass
+        glBegin(GL_QUADS);
+        glVertex2i(690+50, 480);
+        glVertex2i(720+50, 480);
+        glVertex2i(720+50, 510);
+        glVertex2i(690+50, 510);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0); // h4 door line
+        glBegin(GL_LINES);
+        glVertex2i(705+50, 480);
+        glVertex2i(705+50, 510);
+        glVertex2i(690+50, 495);
+        glVertex2i(720+50, 495);
+        glEnd();
+        glColor3f(1, 0.957, 0.608); // house4 right glass
+        glBegin(GL_QUADS);
+        glVertex2i(690+50, 480-50);
+        glVertex2i(720+50, 480-50);
+        glVertex2i(720+50, 510-50);
+        glVertex2i(690+50, 510-50);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0); // h4 door line
+        glBegin(GL_LINES);
+        glVertex2i(705+50, 480-50);
+        glVertex2i(705+50, 510-50);
+        glVertex2i(690+50, 495-50);
+        glVertex2i(720+50, 495-50);
+        glEnd();
+        
+        
+        
+        
+        
+        glColor3f(0.122, 0.353, 0.471); // y axis road
+        glBegin(GL_QUADS);
+        glVertex2i(460,310);
+        glVertex2i(640,310);
+        glVertex2i(590,450);
+        glVertex2i(510,450);
+        glEnd();
+        glColor3f(1, 0.722, 0.188); // y axis road yellow line
+        glBegin(GL_QUADS);
+        glVertex2i(545+2,180);
+        glVertex2i(555-2,180);
+        glVertex2i(555-2,450);
+        glVertex2i(545+2,450);
+        glEnd();
+        glColor3f(0.616, 0.922, 0.914); // y axis road Zebra cross
+        glBegin(GL_QUADS);
+        glVertex2i(515-7,350);
+        glVertex2i(525-7,350);
+        glVertex2i(530-3,400);
+        glVertex2i(520-3,400);
+        glEnd();
+        glColor3f(0.616, 0.922, 0.914);
+        glBegin(GL_QUADS);
+        glVertex2i(590+1, 350); //y axis road zebra cross
+        glVertex2i(580+1, 350);
+        glVertex2i(571+1, 400);
+        glVertex2i(581+1, 400);
+        glEnd();
+        glColor3f(0.616, 0.922, 0.914);
+        glBegin(GL_QUADS);
+        glVertex2i(522, 430);
+        glVertex2i(532, 430);//y axis road zebra cross
+        glVertex2i(535, 450);
+        glVertex2i(525, 450);
+        glEnd();
+        glColor3f(0.616, 0.922, 0.914);
+        glBegin(GL_QUADS);
+        glVertex2i(522+40+5, 430);
+        glVertex2i(532+40+5, 430);
+        glVertex2i(535+40, 450);//y axis road zebra cross
+        glVertex2i(525+40, 450);
+        glEnd();
+        
+        
+        car();    //car
+        
+        car2();
+        
+        
+        glColor3f(0.788, 0.376, 0.494); // house5
+        glBegin(GL_QUADS);
+        glVertex2i(790,380);
+        glVertex2i(910,380);
+        glVertex2i(910,570);
+        glVertex2i(790,570);
+        glEnd();
+        glColor3f(0.702, 0.557, 0.227); // house5 roof
+        glBegin(GL_QUADS);
+        glVertex2i(790-5,570);
+        glVertex2i(910+5,570);
+        glVertex2i(910+5,580);
+        glVertex2i(790-5,580);
+        glEnd();
+        
+        glColor3f(0.976, 0.984, 0.533); // house5 door
+        glBegin(GL_QUADS);
+        glVertex2i(710+120, 380);
+        glVertex2i(750+120, 380);
+        glVertex2i(750+120, 420);
+        glVertex2i(710+120, 420);
+        glEnd();
+        glColor3f(0.702, 0.557, 0.227); // house5 board
+        glBegin(GL_QUADS);
+        glVertex2i(810,420);
+        glVertex2i(890,420);
+        glVertex2i(880,450);
+        glVertex2i(820,450);
+        glEnd();
+        glColor3f(0.702, 0.557, 0.227); // house5 door
+        glBegin(GL_QUADS);
+        glVertex2i(710+120, 380);
+        glVertex2i(750+120, 380);
+        glVertex2i(750+120, 390);
+        glVertex2i(710+120, 390);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0); // h5 door line
+        glBegin(GL_LINES);
+        glVertex2i(850, 390);
+        glVertex2i(850, 420);
+        glEnd();
+        
+        
+        glColor3f(0.976, 0.984, 0.533); // house5 left glass
+        glBegin(GL_QUADS);
+        glVertex2i(810, 470);
+        glVertex2i(840, 470);
+        glVertex2i(840, 500);
+        glVertex2i(810, 500);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0); // h5 door line
+        glBegin(GL_LINES);
+        glVertex2i(825, 470);
+        glVertex2i(825, 500);
+        
+        glVertex2i(810, 485);
+        glVertex2i(840, 485);
+        glEnd();
+        glColor3f(0.976, 0.984, 0.533); // house5 left glass
+        glBegin(GL_QUADS);
+        glVertex2i(810, 470+50);
+        glVertex2i(840, 470+50);
+        glVertex2i(840, 500+50);
+        glVertex2i(810, 500+50);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0); // h5 door line
+        glBegin(GL_LINES);
+        glVertex2i(825, 470+50);
+        glVertex2i(825, 500+50);
+        
+        glVertex2i(810, 485+50);
+        glVertex2i(840, 485+50);
+        glEnd();
+        
+        
+        
+        glColor3f(0.976, 0.984, 0.533); // house5 right glass
+        glBegin(GL_QUADS);
+        glVertex2i(810+50, 470);
+        glVertex2i(840+50, 470);
+        glVertex2i(840+50, 500);
+        glVertex2i(810+50, 500);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0); // h5 door line
+        glBegin(GL_LINES);
+        glVertex2i(825+50, 470);
+        glVertex2i(825+50, 500);
+        
+        glVertex2i(810+50, 485);
+        glVertex2i(840+50, 485);
+        glEnd();
+        
+        glColor3f(0.976, 0.984, 0.533); // house5 right glass
+        glBegin(GL_QUADS);
+        glVertex2i(810+50, 470+50);
+        glVertex2i(840+50, 470+50);
+        glVertex2i(840+50, 500+50);
+        glVertex2i(810+50, 500+50);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0); // h5 door line
+        glBegin(GL_LINES);
+        glVertex2i(825+50, 470+50);
+        glVertex2i(825+50, 500+50);
+        
+        glVertex2i(810+50, 485+50);
+        glVertex2i(840+50, 485+50);
+        glEnd();
+      
+        
+
+    }
+    
+    
+     else if(nightMode) {
+        // Night colors
+        
+        glClear(GL_COLOR_BUFFER_BIT);
+        glPointSize(10.0);
+        glColor3f(0.149, 0.514, 0.569);  // Water
+        glBegin(GL_QUADS);
+        glVertex2i(0,0);
+        glVertex2i(1000,0);
+        glVertex2i(1000,180);
+        glVertex2i(0,180);
+        glEnd();
+        glColor3f(0.031, 0.027, 0.027);  // Water border
+        glBegin(GL_QUADS);
+        glVertex2i(0,170);
+        glVertex2i(1000,170);
+        glVertex2i(1000,180);
+        glVertex2i(0,180);
+        glEnd();
+        
+        
+        glColor3f(0.902, 0.102, 0.302);  // boat
+        glBegin(GL_QUADS);
+        glVertex2i(340+ shift,70);
+        glVertex2i(380+ shift,40);
+        glVertex2i(520+ shift,40);
+        glVertex2i(560+ shift,70);
+        glEnd();
+        glColor3f(0.961, 0.714, 0.133);  // boat
+        glBegin(GL_QUADS);
+        glVertex2i(370+ shift,70);
+        glVertex2i(530+ shift,70);
+        glVertex2i(500+ shift,90);
+        glVertex2i(400+ shift,90);
+        glEnd();
+        glColor3f(0.09, 0.09, 0.086);  // boat
+        glBegin(GL_TRIANGLES);
+        glVertex2i(420+ shift,90);
+        glVertex2i(480+ shift,90);
+        glVertex2i(450+ shift,130);
+        glEnd();
+        glLineWidth(3.0f);
+        glColor3f(0.122, 0.122, 0.11);  // boat
+        glBegin(GL_LINES);
+        glVertex2i(450+ shift,130);
+        glVertex2i(450+ shift,150);
+        glEnd();
+        glColor3f(0.024, 0.58, 0.106);  // boat
+        glBegin(GL_TRIANGLES);
+        glVertex2i(450+ shift,150);
+        glVertex2i(450+ shift,140);
+        glVertex2i(465+ shift,145);
+        glEnd();
+        
+        glColor3f(0.875, 0.957, 0.961);
+        circle(6, 6, 450+ shift, 80);
+        glColor3f(0.875, 0.957, 0.961);
+        circle(6, 6, 450+40+ shift, 80);
+        glColor3f(0.875, 0.957, 0.961);
+        circle(6, 6, 450-40+ shift, 80);
+        glEnd();
+        
+        
+        
+        
+        
+        glColor3f(0.122, 0.353, 0.471);  // road
+        glBegin(GL_QUADS);
+        glVertex2i(0,180);
+        glVertex2i(1000,180);
+        glVertex2i(1000,310);
+        glVertex2i(0,310);
+        glEnd();
+        glColor3f(0.953, 0.725, 0.592);  // road border
+        glBegin(GL_QUADS);
+        glVertex2i(0,310);
+        glVertex2i(1000,310);
+        glVertex2i(1000,320);
+        glVertex2i(0,320);
+        glEnd();
+        
+        
+        glColor3f(0.616, 0.922, 0.914);
+        for (int x = 30; x <= 1200; x += 70) {
+            glBegin(GL_QUADS);
+            glVertex2i(x, 240);
+            glVertex2i(x + 70, 240);      // zebra cross
+            glVertex2i(x + 70, 250);
+            glVertex2i(x, 250);
+            x= x+70;
+            glEnd();
+        }
+        
+        
+        glColor3f(0.671, 0.631, 0.549);  // footpath
+        glBegin(GL_QUADS);
+        glVertex2i(0,320);
+        glVertex2i(1000,320);
+        glVertex2i(1000,380);
+        glVertex2i(0,380);
+        glEnd();
+        
+        
+        for (int x = 80; x <= 400; x += 70) {
+            glLineWidth(3.0f);
+            glColor3f(0.02, 0.016, 0);  // footpath line
+            glBegin(GL_LINES);
+            glVertex2i(x, 310);
+            glVertex2i(x, 320);
+            glEnd();
+            
+            glLineWidth(4.0f);
+            glColor3f(0.639, 0.459, 0.337);  // footpath line
+            glBegin(GL_LINES);
+            glVertex2i(x, 320);
+            glVertex2i(x + 20, 380);
+            glEnd();
+        }
+        
+        
+        for (int x = 700; x <= 1100; x += 70) {
+            glLineWidth(3.0f);
+            glColor3f(0.02, 0.016, 0);  // footpath line
+            glBegin(GL_LINES);
+            glVertex2i(x, 310);
+            glVertex2i(x, 320);
+            glEnd();
+            
+            glLineWidth(4.0f);
+            glColor3f(0.639, 0.459, 0.337);  // footpath line
+            glBegin(GL_LINES);
+            glVertex2i(x, 320);
+            glVertex2i(x - 20, 380);
+            glEnd();
+        }
+        
+        
+        
+        
+        
+        glColor3f(0.114, 0.353, 0.467); // sky
+        glBegin(GL_QUADS);
+        glVertex2i(0,380);
+        glVertex2i(1000,380);
+        glVertex2i(1000,900);
+        glVertex2i(0,900);
+        glEnd();
+        
+        glColor3f(0.267, 0.439, 0.533); // backround
+        glBegin(GL_QUADS);
+        glVertex2i(480,380);
+        glVertex2i(510,380);
+        glVertex2i(510,450);
+        glVertex2i(460,450);
+        glEnd();
+        glColor3f(0.267, 0.439, 0.533); // backround
+        glBegin(GL_QUADS);
+        glVertex2i(590,450);
+        glVertex2i(600,380);
+        glVertex2i(670,380);
+        glVertex2i(670,450);
+        glEnd();
+        
+        
+        glColor3f(0.984, 1, 0.745);  //moon
+        circle(52, 55, 550, 830);
+        glEnd();
+        glColor3f(0.114, 0.353, 0.467);  //sun
+        circle(50, 53, 567, 838);
+        glEnd();
+        
+        clouds();    //clouds
+        
+        
+        
+        glColor3f(0.612, 0.388, 0);
+        glBegin(GL_QUADS);
+        glVertex2i(84-20,380);
+        glVertex2i(100-20,380);  //tree 1
+        glVertex2i(100-20,450);
+        glVertex2i(84-20,450);
+        glEnd();
+        glColor3f(0.02, 0.561, 0.02);
+        tree(90, 40, 72, 500-20-10);
+        glColor3f(0.02, 0.561, 0.02);
+        tree(70, 40, 72, 500-20+25-10);
+        glColor3f(0.02, 0.561, 0.02);
+        tree(55, 40, 72, 500-20+25+24-10);
+        glEnd();
+        
+        glColor3f(0.612, 0.388, 0);
+        glBegin(GL_QUADS);
+        glVertex2i(84-20+900,380);
+        glVertex2i(100-20+900,380);  //tree 2
+        glVertex2i(100-20+900,450);
+        glVertex2i(84-20+900,450);
+        glEnd();
+        glColor3f(0.02, 0.561, 0.02);
+        tree(90, 50, 72+900, 500-20);
+        glColor3f(0.02, 0.561, 0.02);
+        tree(73, 40, 72+900, 500-20+25);
+        glColor3f(0.02, 0.561, 0.02);
+        tree(55, 40, 72+900, 500-20+25+25);
+        glColor3f(0.02, 0.561, 0.02);
+        tree(35, 25, 72+900, 500-20+25+24+13);
+        glEnd();
+        
+        
+        glLineWidth(5.0f);
+        glColor3f(0.02, 0.016, 0);  // traffic light
+        glBegin(GL_LINES);
+        glVertex2i(20,330);
+        glVertex2i(34,330);
+        glEnd();
+        glLineWidth(5.0f);
+        glColor3f(0.02, 0.016, 0);  // traffic light
+        glBegin(GL_LINES);
+        glVertex2i(27,330);
+        glVertex2i(27,430);
+        glEnd();
+        glColor3f(0.275, 0.298, 0.302);  // traffic
+        glBegin(GL_QUADS);
+        glVertex2i(15,430);
+        glVertex2i(39,430);
+        glVertex2i(39,490);
+        glVertex2i(15,490);
+        glEnd();
+        glColor3f(0, 0.671, 0.016);
+        circle(7, 7, 30-3, 440+2);
+        
+        glColor3f(0.965, 1, 0);      // traffic
+        circle(7, 7, 30-3, 440+2+18);
+        
+        glColor3f( 1, 0, 0.122);      // traffic
+        circle(7, 7, 30-3, 440+20+18);
+        glEnd();
+        
+        
+        
+        glLineWidth(5.0f);
+        glColor3f(0.49, 0.482, 0.475);  // road light
+        glBegin(GL_LINES);
+        glVertex2i(50+10,380);
+        glVertex2i(50+10,500);
+        
+        glVertex2i(50-2+10,500);
+        glVertex2i(100+10+10,500);
+        glEnd();
+        
+        glColor3ub(255, 215, 0);
+        circle(15, 7, 100+5, 500-5);
+        glLineWidth(8.0f);
+        glColor3f(0.031, 0.031, 0.0316);  // road light
+        glBegin(GL_LINES);
+        glVertex2i(90,500-.5);
+        glVertex2i(120,500-.5);
+        glEnd();
+        
+        
+        
+        
+        glLineWidth(4.0f);
+        glColor3f(0.4, 0.384, 0.376);  // bench leg
+        glBegin(GL_LINES);
+        glVertex2i(73,355);
+        glVertex2i(73,365);
+        
+        glVertex2i(73+10,355+5);
+        glVertex2i(73+10,365+5);
+        
+        glVertex2i(73+55,355+2);
+        glVertex2i(73+55,365+2);
+        
+        glVertex2i(73+64,355+12);
+        glVertex2i(73+64,365+12);
+        glEnd();
+        
+        glColor3f(0.69, 0.369, 0.173); // bench
+        glBegin(GL_QUADS);
+        glVertex2i(70,365);
+        glVertex2i(130,365);
+        glVertex2i(140,380);
+        glVertex2i(80,380);
+        glEnd();
+        glLineWidth(3.0f);
+        glColor3f(0.69, 0.369, 0.173);  // bench
+        glBegin(GL_LINES);
+        glVertex2i(80,385-1);
+        glVertex2i(140,385-1);
+        glVertex2i(80,385+5);
+        glVertex2i(140,385+5);
+        glVertex2i(80+2,380);
+        glVertex2i(80+2,395);
+        glVertex2i(80+2+55,380);
+        glVertex2i(80+2+55,395);
+        glEnd();
+        
+        chimni();
+        chimni1();
+        chimni2();
+        
+        glColor3f(0.769, 0.729, 0.604); // house1
+        glBegin(GL_QUADS);
+        glVertex2i(150,380);
+        glVertex2i(270,380);
+        glVertex2i(270,570);
+        glVertex2i(150,570);
+        glEnd();
+        glColor3f(0.769, 0.584, 0.427); // house1
+        glBegin(GL_QUADS);
+        glVertex2i(145,570);
+        glVertex2i(275,570);
+        glVertex2i(275,580);
+        glVertex2i(145,580);
+        glEnd();
+        
+
+        
+        
+        glEnd();
+        
+        glColor3f(0.969, 0.549, 0.353); // house1 chimni
+        glBegin(GL_QUADS);
+        glVertex2i(220,580);
+        glVertex2i(250,580);
+        glVertex2i(250,600);
+        glVertex2i(220,600);
+        glEnd();
+        glColor3f(0.969, 0.827, 0.58); // house1 chimni
+        glBegin(GL_QUADS);
+        glVertex2i(215,600);
+        glVertex2i(255,600);
+        glVertex2i(255,610);
+        glVertex2i(215,610);
+        glEnd();
+        glColor3f(0.976, 0.984, 0.639); // house1 door
+        glBegin(GL_QUADS);
+        glVertex2i(190,380);
+        glVertex2i(230,380);
+        glVertex2i(230,420);
+        glVertex2i(190,420);
+        glEnd();
+        glColor3f(0.941, 0.796, 0.541); // house1 door
+        glBegin(GL_QUADS);
+        glVertex2i(190,380);
+        glVertex2i(230,380);
+        glVertex2i(230,390);
+        glVertex2i(190,390);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);  // h1 door
+        glBegin(GL_LINES);
+        glVertex2i(210,390);
+        glVertex2i(210,420);
+        glEnd();
+        glColor3f(1, 0.553, 0.427); // house1 door
+        glBegin(GL_QUADS);
+        glVertex2i(170,420);
+        glVertex2i(250,420);
+        glVertex2i(250,440+10);
+        glVertex2i(170,440+10);
+        glEnd();
+        glColor3f(0.843, 0.306, 0.94); // house1 door
+        glBegin(GL_QUADS);
+        glVertex2i(170,420);
+        glVertex2i(180,420);
+        glVertex2i(180,440+10);
+        glVertex2i(170,440+10);
+        glEnd();
+        glColor3f(0.988, 0.929, 0.388); // house1 door
+        glBegin(GL_QUADS);
+        glVertex2i(170+20,420);
+        glVertex2i(180+20,420);
+        glVertex2i(180+20,440+10);
+        glVertex2i(170+20,440+10);
+        glEnd();
+        glColor3f(0.843, 0.306, 0.94); // house1 door
+        glBegin(GL_QUADS);
+        glVertex2i(170+40,420);
+        glVertex2i(180+40,420);
+        glVertex2i(180+40,440+10);
+        glVertex2i(170+40,440+10);
+        glEnd();
+        glColor3f(0.969, 0.725, 0.333); // house1 door
+        glBegin(GL_QUADS);
+        glVertex2i(170+20+40,420);
+        glVertex2i(180+20+40,420);
+        glVertex2i(180+20+40,440+10);
+        glVertex2i(170+20+40,440+10);
+        glEnd();
+        
+        glColor3f(0.976, 0.898, 0.439); // house1 left window
+        glBegin(GL_QUADS);
+        glVertex2i(170,450+15);
+        glVertex2i(200,450+15);
+        glVertex2i(200,480+15);
+        glVertex2i(170,480+15);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);  // h1 window line
+        glBegin(GL_LINES);
+        glVertex2i(185,450+15);
+        glVertex2i(185,480+15);
+        glVertex2i(170,465+15);
+        glVertex2i(200,465+15);
+        glEnd();
+        glColor3f(0.976, 0.898, 0.439);// house1 left window
+        glBegin(GL_QUADS);
+        glVertex2i(170,500+15);
+        glVertex2i(200,500+15);
+        glVertex2i(200,530+15);
+        glVertex2i(170,530+15);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h1 window line
+        glBegin(GL_LINES);
+        glVertex2i(185,500+15);
+        glVertex2i(185,530+15);
+        glVertex2i(170,515+15);
+        glVertex2i(200,515+15);
+        glEnd();
+        
+        
+        
+        glColor3f(0.976, 0.898, 0.439); // house1 right window
+        glBegin(GL_QUADS);
+        glVertex2i(220,450+15);
+        glVertex2i(250,450+15);
+        glVertex2i(250,480+15);
+        glVertex2i(220,480+15);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);  // h1 window line
+        glBegin(GL_LINES);
+        glVertex2i(235,450+15);
+        glVertex2i(235,480+15);
+        glVertex2i(220,465+15);
+        glVertex2i(250,465+15);
+        glEnd();
+        glColor3f(0.976, 0.898, 0.439);// house1 right window
+        glBegin(GL_QUADS);
+        glVertex2i(220,515);
+        glVertex2i(250,515);
+        glVertex2i(250,545);
+        glVertex2i(220,545);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h1 window line
+        glBegin(GL_LINES);
+        glVertex2i(235,515);
+        glVertex2i(235,545);
+        glVertex2i(220,530);
+        glVertex2i(250,530);
+        glEnd();
+        
+        
+        
+        
+        
+        glColor3f(0.89, 0.702, 0.459); // house2
+        glBegin(GL_QUADS);
+        glVertex2i(270,380);
+        glVertex2i(380,380);
+        glVertex2i(380,500);
+        glVertex2i(270,500);
+        glEnd();
+        glColor3f(0.902, 0.396, 0.255); // house2 roof
+        glBegin(GL_QUADS);
+        glVertex2i(270,500);
+        glVertex2i(380,500);
+        glVertex2i(380,510);
+        glVertex2i(270,510);
+        glEnd();
+        glColor3f(0.965, 0.898, 0.514); // house2 door glass
+        glBegin(GL_QUADS);
+        glVertex2i(300,380);
+        glVertex2i(350,380);
+        glVertex2i(350,420);
+        glVertex2i(300,420);
+        glEnd();
+        glColor3f(0.859, 0.443, 0.38); // house2 door
+        glBegin(GL_QUADS);
+        glVertex2i(300,380);
+        glVertex2i(350,380);
+        glVertex2i(350,390);
+        glVertex2i(300,390);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h2 door line
+        glBegin(GL_LINES);
+        glVertex2i(325,390);
+        glVertex2i(325,420);
+        glEnd();
+        glColor3f(0.859, 0.443, 0.38); // house2 door
+        glBegin(GL_QUADS);
+        glVertex2i(280,420);
+        glVertex2i(370,420);
+        glVertex2i(360,450);
+        glVertex2i(290,450);
+        glEnd();
+        glColor3f(0.976, 0.898, 0.439); // house2 left window glass clr
+        glBegin(GL_QUADS);
+        glVertex2i(280,460);
+        glVertex2i(320,460);
+        glVertex2i(320,475);
+        glVertex2i(280,475);
+        glEnd();
+        glColor3f(0.976, 0.898, 0.439); // house2 window right glass clr
+        glBegin(GL_QUADS);
+        glVertex2i(280+50,460);
+        glVertex2i(320+50,460);
+        glVertex2i(320+50,475);
+        glVertex2i(280+50,475);
+        glEnd();
+        glColor3f(0.996, 0.957, 0.651); // house2 left window  white clr
+        glBegin(GL_QUADS);
+        glVertex2i(280,475);
+        glVertex2i(320,475);
+        glVertex2i(320,490);
+        glVertex2i(280,490);
+        glEnd();
+        glColor3f(0.996, 0.957, 0.651); // house2 right window  white clr
+        glBegin(GL_QUADS);
+        glVertex2i(280+50,475);
+        glVertex2i(320+50,475);
+        glVertex2i(320+50,490);
+        glVertex2i(280+50,490);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h2 left window line
+        glBegin(GL_LINES);
+        glVertex2i(300,460);
+        glVertex2i(300,490);
+        glVertex2i(280,475);
+        glVertex2i(320,475);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h2 left window line
+        glBegin(GL_LINES);
+        glVertex2i(300+50,460);
+        glVertex2i(300+50,490);
+        glVertex2i(280+50,475);
+        glVertex2i(320+50,475);
+        glEnd();
+        
+        
+        
+        
+        
+        
+        glColor3f(0.859, 0.31, 0.467); // house3
+        glBegin(GL_QUADS);
+        glVertex2i(380,380);
+        glVertex2i(500,380);
+        glVertex2i(500,600);
+        glVertex2i(380,600);
+        glEnd();
+        glColor3f(0.89, 0.494, 0.361); // house3 roof
+        glBegin(GL_QUADS);
+        glVertex2i(375,590);
+        glVertex2i(505,590);
+        glVertex2i(505,600);
+        glVertex2i(375,600);
+        glEnd();
+        glColor3f(0.976, 0.984, 0.592); // house3 door
+        glBegin(GL_QUADS);
+        glVertex2i(420,380);
+        glVertex2i(460,380);
+        glVertex2i(460,430);
+        glVertex2i(420,430);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h3 door line
+        glBegin(GL_LINES);
+        glVertex2i(440,380);
+        glVertex2i(440,430);
+        glEnd();
+        glColor3f(0.89, 0.494, 0.361); // house3 door board
+        glBegin(GL_QUADS);
+        glVertex2i(400,430);
+        glVertex2i(480,430);
+        glVertex2i(480,460);
+        glVertex2i(400,460);
+        glEnd();
+        glColor3f(01, 0.957, 0.608); // house3 left glass
+        glBegin(GL_QUADS);
+        glVertex2i(400,480);
+        glVertex2i(430,480);
+        glVertex2i(430,510);
+        glVertex2i(400,510);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h3 door line
+        glBegin(GL_LINES);
+        glVertex2i(415,480);
+        glVertex2i(415,510);
+        glVertex2i(400,495);
+        glVertex2i(430,495);
+        glEnd();
+        
+        glColor3f(1, 0.957, 0.608); // house3 left glass
+        glBegin(GL_QUADS);
+        glVertex2i(400,480+50);
+        glVertex2i(430,480+50);
+        glVertex2i(430,510+50);
+        glVertex2i(400,510+50);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h3 door line
+        glBegin(GL_LINES);
+        glVertex2i(415,480+50);
+        glVertex2i(415,510+50);
+        glVertex2i(400,495+50);
+        glVertex2i(430,495+50);
+        glEnd();
+        
+        glColor3f(1, 0.957, 0.608); // house3 right glass
+        glBegin(GL_QUADS);
+        glVertex2i(450,480);
+        glVertex2i(480,480);
+        glVertex2i(480,510);
+        glVertex2i(450,510);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h3 left line
+        glBegin(GL_LINES);
+        glVertex2i(465,480);
+        glVertex2i(465,510);
+        glVertex2i(450,495);
+        glVertex2i(480,495);
+        glEnd();
+        glColor3f(1, 0.957, 0.608); // house3 right glass
+        glBegin(GL_QUADS);
+        glVertex2i(450,480+50);
+        glVertex2i(480,480+50);
+        glVertex2i(480,510+50);
+        glVertex2i(450,510+50);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h3 left line
+        glBegin(GL_LINES);
+        glVertex2i(465,480+50);
+        glVertex2i(465,510+50);
+        glVertex2i(450,495+50);
+        glVertex2i(480,495+50);
+        glEnd();
+        
+        glColor3f(0.027, 0.518, 0.678); // building shadow
+        glBegin(GL_QUADS);
+        glVertex2i(590, 450);
+        glVertex2i(670, 450);
+        glVertex2i(670, 560+10);
+        glVertex2i(590, 560+10);
+        glEnd();
+        
+        
+        glLineWidth(5.0f);
+        glColor3f(0.02, 0.016, 0);  // traffic light
+        glBegin(GL_LINES);
+        glVertex2i(20+620,330);
+        glVertex2i(34+620,330);
+        glEnd();
+        glLineWidth(5.0f);
+        glColor3f(0.02, 0.016, 0);  // traffic light
+        glBegin(GL_LINES);
+        glVertex2i(27+620,330);
+        glVertex2i(27+620,430);
+        glEnd();
+        glColor3f(0.275, 0.298, 0.302);  // traffic
+        glBegin(GL_QUADS);
+        glVertex2i(15+620,430);
+        glVertex2i(39+620,430);
+        glVertex2i(39+620,490);
+        glVertex2i(15+620,490);
+        glEnd();
+        glColor3f(0, 0.671, 0.016);
+        circle(7, 7, 30-3+620, 440+2);
+        
+        glColor3f(0.965, 1, 0);      // traffic
+        circle(7, 7, 30-3+620, 440+2+18);
+        
+        glColor3f( 1, 0, 0.122);      // traffic
+        circle(7, 7, 30-3+620, 440+20+18);
+        
+        glColor3f(0.275, 0.298, 0.302);  // traffic
+        glBegin(GL_QUADS);
+        glVertex2i(15,430);
+        glVertex2i(39,430);
+        glVertex2i(39,490);
+        glVertex2i(15,490);
+        glEnd();
+        glColor3f(0, 0.671, 0.016);// traffic 1
+        circle(7, 7, 30-3, 440+2);
+        
+        glColor3f(0.965, 1, 0);      // traffic 1
+        circle(7, 7, 30-3, 440+2+18);
+        
+        glColor3f( 1, 0, 0.122);      // traffic 1
+        circle(7, 7, 30-3, 440+20+18);
+        
+        
+        
+        glColor3f(0.722, 0.58, 0.467); // house4
+        glBegin(GL_QUADS);
+        glVertex2i(670, 380);
+        glVertex2i(790, 380);
+        glVertex2i(790, 530);
+        glVertex2i(670, 530);
+        glEnd();
+        glColor3f(0.761, 0.439, 0.38); // house4 roof
+        glBegin(GL_QUADS);
+        glVertex2i(665, 530);
+        glVertex2i(795, 530);
+        glVertex2i(795, 540);
+        glVertex2i(665, 540);
+        glEnd();
+        glColor3f(0.902, 0.827, 0.471); // house4 door
+        glBegin(GL_QUADS);
+        glVertex2i(710, 380);
+        glVertex2i(750, 380);
+        glVertex2i(750, 420);
+        glVertex2i(710, 420);
+        glEnd();
+        glColor3f(0.761, 0.439, 0.38); // house4 door
+        glBegin(GL_QUADS);
+        glVertex2i(710, 380);
+        glVertex2i(750, 380);
+        glVertex2i(750, 390);
+        glVertex2i(710, 390);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h4 door line
+        glBegin(GL_LINES);
+        glVertex2i(730,390);
+        glVertex2i(730,420);
+        glEnd();
+        
+        glColor3f(1, 0.957, 0.608); // house4 left glass
+        glBegin(GL_QUADS);
+        glVertex2i(690, 480);
+        glVertex2i(720, 480);
+        glVertex2i(720, 510);
+        glVertex2i(690, 510);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0); // h4 door line
+        glBegin(GL_LINES);
+        glVertex2i(705, 480);
+        glVertex2i(705, 510);
+        glVertex2i(690, 495);
+        glVertex2i(720, 495);
+        glEnd();
+        
+        glColor3f(1, 0.957, 0.608); // house4 left glass
+        glBegin(GL_QUADS);
+        glVertex2i(690, 480-50);
+        glVertex2i(720, 480-50);
+        glVertex2i(720, 510-50);
+        glVertex2i(690, 510-50);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0); // h4 door line
+        glBegin(GL_LINES);
+        glVertex2i(705, 480-50);
+        glVertex2i(705, 510-50);
+        glVertex2i(690, 495-50);
+        glVertex2i(720, 495-50);
+        glEnd();
+        
+        glColor3f(1, 0.957, 0.608); // house4 right glass
+        glBegin(GL_QUADS);
+        glVertex2i(690+50, 480);
+        glVertex2i(720+50, 480);
+        glVertex2i(720+50, 510);
+        glVertex2i(690+50, 510);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0); // h4 door line
+        glBegin(GL_LINES);
+        glVertex2i(705+50, 480);
+        glVertex2i(705+50, 510);
+        glVertex2i(690+50, 495);
+        glVertex2i(720+50, 495);
+        glEnd();
+        glColor3f(1, 0.957, 0.608); // house4 right glass
+        glBegin(GL_QUADS);
+        glVertex2i(690+50, 480-50);
+        glVertex2i(720+50, 480-50);
+        glVertex2i(720+50, 510-50);
+        glVertex2i(690+50, 510-50);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0); // h4 door line
+        glBegin(GL_LINES);
+        glVertex2i(705+50, 480-50);
+        glVertex2i(705+50, 510-50);
+        glVertex2i(690+50, 495-50);
+        glVertex2i(720+50, 495-50);
+        glEnd();
+        
+        
+        
+        
+        
+        glColor3f(0.122, 0.353, 0.471); // y axis road
+        glBegin(GL_QUADS);
+        glVertex2i(460,310);
+        glVertex2i(640,310);
+        glVertex2i(590,450);
+        glVertex2i(510,450);
+        glEnd();
+        glColor3f(1, 0.722, 0.188); // y axis road yellow line
+        glBegin(GL_QUADS);
+        glVertex2i(545+2,180);
+        glVertex2i(555-2,180);
+        glVertex2i(555-2,450);
+        glVertex2i(545+2,450);
+        glEnd();
+        glColor3f(0.616, 0.922, 0.914); // y axis road Zebra cross
+        glBegin(GL_QUADS);
+        glVertex2i(515-7,350);
+        glVertex2i(525-7,350);
+        glVertex2i(530-3,400);
+        glVertex2i(520-3,400);
+        glEnd();
+        glColor3f(0.616, 0.922, 0.914);
+        glBegin(GL_QUADS);
+        glVertex2i(590+1, 350); //y axis road zebra cross
+        glVertex2i(580+1, 350);
+        glVertex2i(571+1, 400);
+        glVertex2i(581+1, 400);
+        glEnd();
+        glColor3f(0.616, 0.922, 0.914);
+        glBegin(GL_QUADS);
+        glVertex2i(522, 430);
+        glVertex2i(532, 430);//y axis road zebra cross
+        glVertex2i(535, 450);
+        glVertex2i(525, 450);
+        glEnd();
+        glColor3f(0.616, 0.922, 0.914);
+        glBegin(GL_QUADS);
+        glVertex2i(522+40+5, 430);
+        glVertex2i(532+40+5, 430);
+        glVertex2i(535+40, 450);//y axis road zebra cross
+        glVertex2i(525+40, 450);
+        glEnd();
+        
+        
+        car();    //car
+        
+        car2();
+        
+        
+        glColor3f(0.788, 0.376, 0.494); // house5
+        glBegin(GL_QUADS);
+        glVertex2i(790,380);
+        glVertex2i(910,380);
+        glVertex2i(910,570);
+        glVertex2i(790,570);
+        glEnd();
+        glColor3f(0.702, 0.557, 0.227); // house5 roof
+        glBegin(GL_QUADS);
+        glVertex2i(790-5,570);
+        glVertex2i(910+5,570);
+        glVertex2i(910+5,580);
+        glVertex2i(790-5,580);
+        glEnd();
+        
+        glColor3f(0.976, 0.984, 0.533); // house5 door
+        glBegin(GL_QUADS);
+        glVertex2i(710+120, 380);
+        glVertex2i(750+120, 380);
+        glVertex2i(750+120, 420);
+        glVertex2i(710+120, 420);
+        glEnd();
+        glColor3f(0.702, 0.557, 0.227); // house5 board
+        glBegin(GL_QUADS);
+        glVertex2i(810,420);
+        glVertex2i(890,420);
+        glVertex2i(880,450);
+        glVertex2i(820,450);
+        glEnd();
+        glColor3f(0.702, 0.557, 0.227); // house5 door
+        glBegin(GL_QUADS);
+        glVertex2i(710+120, 380);
+        glVertex2i(750+120, 380);
+        glVertex2i(750+120, 390);
+        glVertex2i(710+120, 390);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0); // h5 door line
+        glBegin(GL_LINES);
+        glVertex2i(850, 390);
+        glVertex2i(850, 420);
+        glEnd();
+        
+        
+        glColor3f(0.976, 0.984, 0.533); // house5 left glass
+        glBegin(GL_QUADS);
+        glVertex2i(810, 470);
+        glVertex2i(840, 470);
+        glVertex2i(840, 500);
+        glVertex2i(810, 500);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0); // h5 door line
+        glBegin(GL_LINES);
+        glVertex2i(825, 470);
+        glVertex2i(825, 500);
+        
+        glVertex2i(810, 485);
+        glVertex2i(840, 485);
+        glEnd();
+        glColor3f(0.976, 0.984, 0.533); // house5 left glass
+        glBegin(GL_QUADS);
+        glVertex2i(810, 470+50);
+        glVertex2i(840, 470+50);
+        glVertex2i(840, 500+50);
+        glVertex2i(810, 500+50);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0); // h5 door line
+        glBegin(GL_LINES);
+        glVertex2i(825, 470+50);
+        glVertex2i(825, 500+50);
+        
+        glVertex2i(810, 485+50);
+        glVertex2i(840, 485+50);
+        glEnd();
+        
+        
+        
+        glColor3f(0.976, 0.984, 0.533); // house5 right glass
+        glBegin(GL_QUADS);
+        glVertex2i(810+50, 470);
+        glVertex2i(840+50, 470);
+        glVertex2i(840+50, 500);
+        glVertex2i(810+50, 500);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0); // h5 door line
+        glBegin(GL_LINES);
+        glVertex2i(825+50, 470);
+        glVertex2i(825+50, 500);
+        
+        glVertex2i(810+50, 485);
+        glVertex2i(840+50, 485);
+        glEnd();
+        
+        glColor3f(0.976, 0.984, 0.533); // house5 right glass
+        glBegin(GL_QUADS);
+        glVertex2i(810+50, 470+50);
+        glVertex2i(840+50, 470+50);
+        glVertex2i(840+50, 500+50);
+        glVertex2i(810+50, 500+50);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0); // h5 door line
+        glBegin(GL_LINES);
+        glVertex2i(825+50, 470+50);
+        glVertex2i(825+50, 500+50);
+        
+        glVertex2i(810+50, 485+50);
+        glVertex2i(840+50, 485+50);
+        glEnd();
+        
+        
+    }
+ 
+
+    ///*****************************************
+    
+    else {
+        // Day colors
+        
+        
+        glClear(GL_COLOR_BUFFER_BIT);
+        glPointSize(10.0);
+        glColor3f(0.443, 0.796, 0.878);  // Water
+        glBegin(GL_QUADS);
+        glVertex2i(0,0);
+        glVertex2i(1000,0);
+        glVertex2i(1000,180);
+        glVertex2i(0,180);
+        glEnd();
+        glColor3f(0.031, 0.027, 0.027);  // Water border
+        glBegin(GL_QUADS);
+        glVertex2i(0,170);
+        glVertex2i(1000,170);
+        glVertex2i(1000,180);
+        glVertex2i(0,180);
+        glEnd();
+        
+        
+        glColor3f(0.839, 0.329, 0.447);  // boat
+        glBegin(GL_QUADS);
+        glVertex2i(340+ shift,70);
+        glVertex2i(380+ shift,40);
+        glVertex2i(520+ shift,40);
+        glVertex2i(560+ shift,70);
+        glEnd();
+        glColor3f(0.949, 0.796, 0.408);  // boat
+        glBegin(GL_QUADS);
+        glVertex2i(370+ shift,70);
+        glVertex2i(530+ shift,70);
+        glVertex2i(500+ shift,90);
+        glVertex2i(400+ shift,90);
+        glEnd();
+        glColor3f(0.278, 0.278, 0.259);  // boat
+        glBegin(GL_TRIANGLES);
+        glVertex2i(420+ shift,90);
+        glVertex2i(480+ shift,90);
+        glVertex2i(450+ shift,130);
+        glEnd();
+        glLineWidth(3.0f);
+        glColor3f(0.122, 0.122, 0.11);  // boat
+        glBegin(GL_LINES);
+        glVertex2i(450+ shift,130);
+        glVertex2i(450+ shift,150);
+        glEnd();
+        glColor3f(0.024, 0.58, 0.106);  // boat
+        glBegin(GL_TRIANGLES);
+        glVertex2i(450+ shift,150);
+        glVertex2i(450+ shift,140);
+        glVertex2i(465+ shift,145);
+        glEnd();
+        
+        glColor3f(0.875, 0.957, 0.961);
+        circle(6, 6, 450+ shift, 80);
+        glColor3f(0.875, 0.957, 0.961);
+        circle(6, 6, 450+40+ shift, 80);
+        glColor3f(0.875, 0.957, 0.961);
+        circle(6, 6, 450-40+ shift, 80);
+        glEnd();
+        
+        
+        
+        
+        
+        glColor3f(0.431, 0.518, 0.576);  // road
+        glBegin(GL_QUADS);
+        glVertex2i(0,180);
+        glVertex2i(1000,180);
+        glVertex2i(1000,310);
+        glVertex2i(0,310);
+        glEnd();
+        glColor3f(0.953, 0.725, 0.592);  // road border
+        glBegin(GL_QUADS);
+        glVertex2i(0,310);
+        glVertex2i(1000,310);
+        glVertex2i(1000,320);
+        glVertex2i(0,320);
+        glEnd();
+        
+        
+        glColor3f(1, 1, 1);
+        for (int x = 30; x <= 1200; x += 70) {
+            glBegin(GL_QUADS);
+            glVertex2i(x, 240);
+            glVertex2i(x + 70, 240);      // zebra cross
+            glVertex2i(x + 70, 250);
+            glVertex2i(x, 250);
+            x= x+70;
+            glEnd();
+        }
+        
+        
+        glColor3f(0.941, 0.914, 0.851);  // footpath
+        glBegin(GL_QUADS);
+        glVertex2i(0,320);
+        glVertex2i(1000,320);
+        glVertex2i(1000,380);
+        glVertex2i(0,380);
+        glEnd();
+        
+        
+        for (int x = 80; x <= 400; x += 70) {
+            glLineWidth(3.0f);
+            glColor3f(0.02, 0.016, 0);  // footpath line
+            glBegin(GL_LINES);
+            glVertex2i(x, 310);
+            glVertex2i(x, 320);
+            glEnd();
+            
+            glLineWidth(4.0f);
+            glColor3f(0.855, 0.733, 0.643);  // footpath line
+            glBegin(GL_LINES);
+            glVertex2i(x, 320);
+            glVertex2i(x + 20, 380);
+            glEnd();
+        }
+        
+        
+        for (int x = 700; x <= 1100; x += 70) {
+            glLineWidth(3.0f);
+            glColor3f(0.02, 0.016, 0);  // footpath line
+            glBegin(GL_LINES);
+            glVertex2i(x, 310);
+            glVertex2i(x, 320);
+            glEnd();
+            
+            glLineWidth(4.0f);
+            glColor3f(0.855, 0.733, 0.643);  // footpath line
+            glBegin(GL_LINES);
+            glVertex2i(x, 320);
+            glVertex2i(x - 20, 380);
+            glEnd();
+        }
+        
+        
+        
+        
+        
+        glColor3f(0.737, 0.89, 0.894); // sky
+        glBegin(GL_QUADS);
+        glVertex2i(0,380);
+        glVertex2i(1000,380);
+        glVertex2i(1000,900);
+        glVertex2i(0,900);
+        glEnd();
+        
+        glColor3f(1, 0.961, 0.902); // backround
+        glBegin(GL_QUADS);
+        glVertex2i(480,380);
+        glVertex2i(510,380);
+        glVertex2i(510,450);
+        glVertex2i(460,450);
+        glEnd();
+        glColor3f(1, 0.961, 0.902); // backround
+        glBegin(GL_QUADS);
+        glVertex2i(590,450);
+        glVertex2i(600,380);
+        glVertex2i(670,380);
+        glVertex2i(670,450);
+        glEnd();
+        
+        
+        glColor3f(1, 0.78, 0.004); //sun
+        circle(52, 55, 550, 830);
+        glEnd();
+        
+        clouds();    //clouds
+        
+        
+        
+        glColor3f(0.612, 0.388, 0);
+        glBegin(GL_QUADS);
+        glVertex2i(84-20,380);
+        glVertex2i(100-20,380);  //tree 1
+        glVertex2i(100-20,450);
+        glVertex2i(84-20,450);
+        glEnd();
+        glColor3f(0.075, 0.871, 0.016);
+        tree(90, 40, 72, 500-20-10);
+        glColor3f(0.075, 0.871, 0.016);
+        tree(70, 40, 72, 500-20+25-10);
+        glColor3f(0.075, 0.871, 0.016);
+        tree(55, 40, 72, 500-20+25+24-10);
+        glEnd();
+        
+        glColor3f(0.612, 0.388, 0);
+        glBegin(GL_QUADS);
+        glVertex2i(84-20+900,380);
+        glVertex2i(100-20+900,380);  //tree 2
+        glVertex2i(100-20+900,450);
+        glVertex2i(84-20+900,450);
+        glEnd();
+        glColor3f(0.075, 0.871, 0.016);
+        tree(90, 50, 72+900, 500-20);
+        glColor3f(0.075, 0.871, 0.016);
+        tree(73, 40, 72+900, 500-20+25);
+        glColor3f(0.075, 0.871, 0.016);
+        tree(55, 40, 72+900, 500-20+25+25);
+        glColor3f(0.075, 0.871, 0.016);
+        tree(35, 25, 72+900, 500-20+25+24+13);
+        glEnd();
+        
+        
+        glLineWidth(5.0f);
+        glColor3f(0.02, 0.016, 0);  // traffic light
+        glBegin(GL_LINES);
+        glVertex2i(20,330);
+        glVertex2i(34,330);
+        glEnd();
+        glLineWidth(5.0f);
+        glColor3f(0.02, 0.016, 0);  // traffic light
+        glBegin(GL_LINES);
+        glVertex2i(27,330);
+        glVertex2i(27,430);
+        glEnd();
+        glColor3f(0.275, 0.298, 0.302);  // traffic
+        glBegin(GL_QUADS);
+        glVertex2i(15,430);
+        glVertex2i(39,430);
+        glVertex2i(39,490);
+        glVertex2i(15,490);
+        glEnd();
+        glColor3f(0, 0.671, 0.016);
+        circle(7, 7, 30-3, 440+2);
+        
+        glColor3f(0.965, 1, 0);      // traffic
+        circle(7, 7, 30-3, 440+2+18);
+        
+        glColor3f( 1, 0, 0.122);      // traffic
+        circle(7, 7, 30-3, 440+20+18);
+        glEnd();
+        
+        
+        
+        glLineWidth(5.0f);
+        glColor3f(0.49, 0.482, 0.475);  // road light
+        glBegin(GL_LINES);
+        glVertex2i(50+10,380);
+        glVertex2i(50+10,500);
+        
+        glVertex2i(50-2+10,500);
+        glVertex2i(100+10+10,500);
+        glEnd();
+        
+        glColor3ub(255, 215, 0);
+        circle(15, 7, 100+5, 500-5);
+        glLineWidth(8.0f);
+        glColor3f(0.031, 0.031, 0.0316);  // road light
+        glBegin(GL_LINES);
+        glVertex2i(90,500-.5);
+        glVertex2i(120,500-.5);
+        glEnd();
+        
+        
+        
+        
+        glLineWidth(4.0f);
+        glColor3f(0.4, 0.384, 0.376);  // bench leg
+        glBegin(GL_LINES);
+        glVertex2i(73,355);
+        glVertex2i(73,365);
+        
+        glVertex2i(73+10,355+5);
+        glVertex2i(73+10,365+5);
+        
+        glVertex2i(73+55,355+2);
+        glVertex2i(73+55,365+2);
+        
+        glVertex2i(73+64,355+12);
+        glVertex2i(73+64,365+12);
+        glEnd();
+        
+        glColor3f(0.859, 0.514, 0.278); // bench
+        glBegin(GL_QUADS);
+        glVertex2i(70,365);
+        glVertex2i(130,365);
+        glVertex2i(140,380);
+        glVertex2i(80,380);
+        glEnd();
+        glLineWidth(3.0f);
+        glColor3f(0.859, 0.514, 0.278);  // bench
+        glBegin(GL_LINES);
+        glVertex2i(80,385-1);
+        glVertex2i(140,385-1);
+        glVertex2i(80,385+5);
+        glVertex2i(140,385+5);
+        glVertex2i(80+2,380);
+        glVertex2i(80+2,395);
+        glVertex2i(80+2+55,380);
+        glVertex2i(80+2+55,395);
+        glEnd();
+        
+        chimni();
+        chimni1();
+        chimni2();
+        
+        glColor3f(1, 0.965, 0.875); // house1
+        glBegin(GL_QUADS);
+        glVertex2i(150,380);
+        glVertex2i(270,380);
+        glVertex2i(270,570);
+        glVertex2i(150,570);
+        glEnd();
+        glColor3f(0.945, 0.808, 0.682); // house1
+        glBegin(GL_QUADS);
+        glVertex2i(145,570);
+        glVertex2i(275,570);
+        glVertex2i(275,580);
+        glVertex2i(145,580);
+        glEnd();
+        
+        
+        
+        
+        glEnd();
+        
+        glColor3f(0.969, 0.659, 0.506); // house1 chimni
+        glBegin(GL_QUADS);
+        glVertex2i(220,580);
+        glVertex2i(250,580);
+        glVertex2i(250,600);
+        glVertex2i(220,600);
+        glEnd();
+        glColor3f(0.949, 0.898, 0.765); // house1 chimni
+        glBegin(GL_QUADS);
+        glVertex2i(215,600);
+        glVertex2i(255,600);
+        glVertex2i(255,610);
+        glVertex2i(215,610);
+        glEnd();
+        glColor3f(0.216, 0.753, 0.784); // house1 door
+        glBegin(GL_QUADS);
+        glVertex2i(190,380);
+        glVertex2i(230,380);
+        glVertex2i(230,420);
+        glVertex2i(190,420);
+        glEnd();
+        glColor3f(0.941, 0.796, 0.541); // house1 door
+        glBegin(GL_QUADS);
+        glVertex2i(190,380);
+        glVertex2i(230,380);
+        glVertex2i(230,390);
+        glVertex2i(190,390);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);  // h1 door
+        glBegin(GL_LINES);
+        glVertex2i(210,390);
+        glVertex2i(210,420);
+        glEnd();
+        glColor3f(1, 0.553, 0.427); // house1 door
+        glBegin(GL_QUADS);
+        glVertex2i(170,420);
+        glVertex2i(250,420);
+        glVertex2i(250,440+10);
+        glVertex2i(170,440+10);
+        glEnd();
+        glColor3f(0.843, 0.306, 0.94); // house1 door
+        glBegin(GL_QUADS);
+        glVertex2i(170,420);
+        glVertex2i(180,420);
+        glVertex2i(180,440+10);
+        glVertex2i(170,440+10);
+        glEnd();
+        glColor3f(0.988, 0.929, 0.388); // house1 door
+        glBegin(GL_QUADS);
+        glVertex2i(170+20,420);
+        glVertex2i(180+20,420);
+        glVertex2i(180+20,440+10);
+        glVertex2i(170+20,440+10);
+        glEnd();
+        glColor3f(0.843, 0.306, 0.94); // house1 door
+        glBegin(GL_QUADS);
+        glVertex2i(170+40,420);
+        glVertex2i(180+40,420);
+        glVertex2i(180+40,440+10);
+        glVertex2i(170+40,440+10);
+        glEnd();
+        glColor3f(0.988, 0.929, 0.388); // house1 door
+        glBegin(GL_QUADS);
+        glVertex2i(170+20+40,420);
+        glVertex2i(180+20+40,420);
+        glVertex2i(180+20+40,440+10);
+        glVertex2i(170+20+40,440+10);
+        glEnd();
+        
+        glColor3f(0.384, 0.788, 0.843); // house1 left window
+        glBegin(GL_QUADS);
+        glVertex2i(170,450+15);
+        glVertex2i(200,450+15);
+        glVertex2i(200,480+15);
+        glVertex2i(170,480+15);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);  // h1 window line
+        glBegin(GL_LINES);
+        glVertex2i(185,450+15);
+        glVertex2i(185,480+15);
+        glVertex2i(170,465+15);
+        glVertex2i(200,465+15);
+        glEnd();
+        glColor3f(0.384, 0.788, 0.843);// house1 left window
+        glBegin(GL_QUADS);
+        glVertex2i(170,500+15);
+        glVertex2i(200,500+15);
+        glVertex2i(200,530+15);
+        glVertex2i(170,530+15);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h1 window line
+        glBegin(GL_LINES);
+        glVertex2i(185,500+15);
+        glVertex2i(185,530+15);
+        glVertex2i(170,515+15);
+        glVertex2i(200,515+15);
+        glEnd();
+        
+        
+        
+        glColor3f(0.384, 0.788, 0.843); // house1 right window
+        glBegin(GL_QUADS);
+        glVertex2i(220,450+15);
+        glVertex2i(250,450+15);
+        glVertex2i(250,480+15);
+        glVertex2i(220,480+15);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);  // h1 window line
+        glBegin(GL_LINES);
+        glVertex2i(235,450+15);
+        glVertex2i(235,480+15);
+        glVertex2i(220,465+15);
+        glVertex2i(250,465+15);
+        glEnd();
+        glColor3f(0.384, 0.788, 0.843);// house1 right window
+        glBegin(GL_QUADS);
+        glVertex2i(220,515);
+        glVertex2i(250,515);
+        glVertex2i(250,545);
+        glVertex2i(220,545);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h1 window line
+        glBegin(GL_LINES);
+        glVertex2i(235,515);
+        glVertex2i(235,545);
+        glVertex2i(220,530);
+        glVertex2i(250,530);
+        glEnd();
+        
+        
+        
+        
+        
+        glColor3f(0.992, 0.816, 0.6); // house2
+        glBegin(GL_QUADS);
+        glVertex2i(270,380);
+        glVertex2i(380,380);
+        glVertex2i(380,500);
+        glVertex2i(270,500);
+        glEnd();
+        glColor3f(1, 0.58, 0.459); // house2 roof
+        glBegin(GL_QUADS);
+        glVertex2i(270,500);
+        glVertex2i(380,500);
+        glVertex2i(380,510);
+        glVertex2i(270,510);
+        glEnd();
+        glColor3f(0.204, 0.737, 0.808); // house2 door glass
+        glBegin(GL_QUADS);
+        glVertex2i(300,380);
+        glVertex2i(350,380);
+        glVertex2i(350,420);
+        glVertex2i(300,420);
+        glEnd();
+        glColor3f(0.961, 0.588, 0.522); // house2 door
+        glBegin(GL_QUADS);
+        glVertex2i(300,380);
+        glVertex2i(350,380);
+        glVertex2i(350,390);
+        glVertex2i(300,390);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h2 door line
+        glBegin(GL_LINES);
+        glVertex2i(325,390);
+        glVertex2i(325,420);
+        glEnd();
+        glColor3f(0.961, 0.588, 0.522); // house2 door
+        glBegin(GL_QUADS);
+        glVertex2i(280,420);
+        glVertex2i(370,420);
+        glVertex2i(360,450);
+        glVertex2i(290,450);
+        glEnd();
+        glColor3f(0.412, 0.812, 0.851); // house2 left window glass clr
+        glBegin(GL_QUADS);
+        glVertex2i(280,460);
+        glVertex2i(320,460);
+        glVertex2i(320,475);
+        glVertex2i(280,475);
+        glEnd();
+        glColor3f(0.412, 0.812, 0.851); // house2 window right glass clr
+        glBegin(GL_QUADS);
+        glVertex2i(280+50,460);
+        glVertex2i(320+50,460);
+        glVertex2i(320+50,475);
+        glVertex2i(280+50,475);
+        glEnd();
+        glColor3f(0.957, 0.996, 0.996); // house2 left window  white clr
+        glBegin(GL_QUADS);
+        glVertex2i(280,475);
+        glVertex2i(320,475);
+        glVertex2i(320,490);
+        glVertex2i(280,490);
+        glEnd();
+        glColor3f(0.957, 0.996, 0.996); // house2 right window  white clr
+        glBegin(GL_QUADS);
+        glVertex2i(280+50,475);
+        glVertex2i(320+50,475);
+        glVertex2i(320+50,490);
+        glVertex2i(280+50,490);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h2 left window line
+        glBegin(GL_LINES);
+        glVertex2i(300,460);
+        glVertex2i(300,490);
+        glVertex2i(280,475);
+        glVertex2i(320,475);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h2 left window line
+        glBegin(GL_LINES);
+        glVertex2i(300+50,460);
+        glVertex2i(300+50,490);
+        glVertex2i(280+50,475);
+        glVertex2i(320+50,475);
+        glEnd();
+        
+        
+        
+        
+        
+        
+        glColor3f(0.949, 0.49, 0.612); // house3
+        glBegin(GL_QUADS);
+        glVertex2i(380,380);
+        glVertex2i(500,380);
+        glVertex2i(500,600);
+        glVertex2i(380,600);
+        glEnd();
+        glColor3f(0.996, 0.635, 0.506); // house3 roof
+        glBegin(GL_QUADS);
+        glVertex2i(375,590);
+        glVertex2i(505,590);
+        glVertex2i(505,600);
+        glVertex2i(375,600);
+        glEnd();
+        glColor3f(0.278, 0.851, 0.878); // house3 door
+        glBegin(GL_QUADS);
+        glVertex2i(420,380);
+        glVertex2i(460,380);
+        glVertex2i(460,430);
+        glVertex2i(420,430);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h3 door line
+        glBegin(GL_LINES);
+        glVertex2i(440,380);
+        glVertex2i(440,430);
+        glEnd();
+        glColor3f(0.996, 0.635, 0.506); // house3 door board
+        glBegin(GL_QUADS);
+        glVertex2i(400,430);
+        glVertex2i(480,430);
+        glVertex2i(480,460);
+        glVertex2i(400,460);
+        glEnd();
+        glColor3f(0.2, 0.824, 0.859); // house3 left glass
+        glBegin(GL_QUADS);
+        glVertex2i(400,480);
+        glVertex2i(430,480);
+        glVertex2i(430,510);
+        glVertex2i(400,510);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h3 door line
+        glBegin(GL_LINES);
+        glVertex2i(415,480);
+        glVertex2i(415,510);
+        glVertex2i(400,495);
+        glVertex2i(430,495);
+        glEnd();
+        
+        glColor3f(0.2, 0.824, 0.859); // house3 left glass
+        glBegin(GL_QUADS);
+        glVertex2i(400,480+50);
+        glVertex2i(430,480+50);
+        glVertex2i(430,510+50);
+        glVertex2i(400,510+50);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h3 door line
+        glBegin(GL_LINES);
+        glVertex2i(415,480+50);
+        glVertex2i(415,510+50);
+        glVertex2i(400,495+50);
+        glVertex2i(430,495+50);
+        glEnd();
+        
+        glColor3f(0.2, 0.824, 0.859); // house3 right glass
+        glBegin(GL_QUADS);
+        glVertex2i(450,480);
+        glVertex2i(480,480);
+        glVertex2i(480,510);
+        glVertex2i(450,510);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h3 left line
+        glBegin(GL_LINES);
+        glVertex2i(465,480);
+        glVertex2i(465,510);
+        glVertex2i(450,495);
+        glVertex2i(480,495);
+        glEnd();
+        glColor3f(0.2, 0.824, 0.859); // house3 right glass
+        glBegin(GL_QUADS);
+        glVertex2i(450,480+50);
+        glVertex2i(480,480+50);
+        glVertex2i(480,510+50);
+        glVertex2i(450,510+50);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h3 left line
+        glBegin(GL_LINES);
+        glVertex2i(465,480+50);
+        glVertex2i(465,510+50);
+        glVertex2i(450,495+50);
+        glVertex2i(480,495+50);
+        glEnd();
+        
+        glColor3f(0.533, 0.882, 0.89); // building shadow
+        glBegin(GL_QUADS);
+        glVertex2i(590, 450);
+        glVertex2i(670, 450);
+        glVertex2i(670, 560+10);
+        glVertex2i(590, 560+10);
+        glEnd();
+        
+        
+        glLineWidth(5.0f);
+        glColor3f(0.02, 0.016, 0);  // traffic light
+        glBegin(GL_LINES);
+        glVertex2i(20+620,330);
+        glVertex2i(34+620,330);
+        glEnd();
+        glLineWidth(5.0f);
+        glColor3f(0.02, 0.016, 0);  // traffic light
+        glBegin(GL_LINES);
+        glVertex2i(27+620,330);
+        glVertex2i(27+620,430);
+        glEnd();
+        glColor3f(0.275, 0.298, 0.302);  // traffic
+        glBegin(GL_QUADS);
+        glVertex2i(15+620,430);
+        glVertex2i(39+620,430);
+        glVertex2i(39+620,490);
+        glVertex2i(15+620,490);
+        glEnd();
+        glColor3f(0, 0.671, 0.016);
+        circle(7, 7, 30-3+620, 440+2);
+        
+        glColor3f(0.965, 1, 0);      // traffic
+        circle(7, 7, 30-3+620, 440+2+18);
+        
+        glColor3f( 1, 0, 0.122);      // traffic
+        circle(7, 7, 30-3+620, 440+20+18);
+        
+        glColor3f(0.275, 0.298, 0.302);  // traffic
+        glBegin(GL_QUADS);
+        glVertex2i(15,430);
+        glVertex2i(39,430);
+        glVertex2i(39,490);
+        glVertex2i(15,490);
+        glEnd();
+        glColor3f(0, 0.671, 0.016);// traffic 1
+        circle(7, 7, 30-3, 440+2);
+        
+        glColor3f(0.965, 1, 0);      // traffic 1
+        circle(7, 7, 30-3, 440+2+18);
+        
+        glColor3f( 1, 0, 0.122);      // traffic 1
+        circle(7, 7, 30-3, 440+20+18);
+        
+        
+        
+        glColor3f(0.914, 0.776, 0.643); // house4
+        glBegin(GL_QUADS);
+        glVertex2i(670, 380);
+        glVertex2i(790, 380);
+        glVertex2i(790, 530);
+        glVertex2i(670, 530);
+        glEnd();
+        glColor3f(1, 0.612, 0.537); // house4 roof
+        glBegin(GL_QUADS);
+        glVertex2i(665, 530);
+        glVertex2i(795, 530);
+        glVertex2i(795, 540);
+        glVertex2i(665, 540);
+        glEnd();
+        glColor3f(0, 0.867, 0.886); // house4 door
+        glBegin(GL_QUADS);
+        glVertex2i(710, 380);
+        glVertex2i(750, 380);
+        glVertex2i(750, 420);
+        glVertex2i(710, 420);
+        glEnd();
+        glColor3f(1, 0.553, 0.427); // house4 door
+        glBegin(GL_QUADS);
+        glVertex2i(710, 380);
+        glVertex2i(750, 380);
+        glVertex2i(750, 390);
+        glVertex2i(710, 390);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0);// h4 door line
+        glBegin(GL_LINES);
+        glVertex2i(730,390);
+        glVertex2i(730,420);
+        glEnd();
+        
+        glColor3f(0.2, 0.824, 0.859); // house4 left glass
+        glBegin(GL_QUADS);
+        glVertex2i(690, 480);
+        glVertex2i(720, 480);
+        glVertex2i(720, 510);
+        glVertex2i(690, 510);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0); // h4 door line
+        glBegin(GL_LINES);
+        glVertex2i(705, 480);
+        glVertex2i(705, 510);
+        glVertex2i(690, 495);
+        glVertex2i(720, 495);
+        glEnd();
+        
+        glColor3f(0.2, 0.824, 0.859); // house4 left glass
+        glBegin(GL_QUADS);
+        glVertex2i(690, 480-50);
+        glVertex2i(720, 480-50);
+        glVertex2i(720, 510-50);
+        glVertex2i(690, 510-50);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0); // h4 door line
+        glBegin(GL_LINES);
+        glVertex2i(705, 480-50);
+        glVertex2i(705, 510-50);
+        glVertex2i(690, 495-50);
+        glVertex2i(720, 495-50);
+        glEnd();
+        
+        glColor3f(0.2, 0.824, 0.859); // house4 right glass
+        glBegin(GL_QUADS);
+        glVertex2i(690+50, 480);
+        glVertex2i(720+50, 480);
+        glVertex2i(720+50, 510);
+        glVertex2i(690+50, 510);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0); // h4 door line
+        glBegin(GL_LINES);
+        glVertex2i(705+50, 480);
+        glVertex2i(705+50, 510);
+        glVertex2i(690+50, 495);
+        glVertex2i(720+50, 495);
+        glEnd();
+        glColor3f(0.2, 0.824, 0.859); // house4 right glass
+        glBegin(GL_QUADS);
+        glVertex2i(690+50, 480-50);
+        glVertex2i(720+50, 480-50);
+        glVertex2i(720+50, 510-50);
+        glVertex2i(690+50, 510-50);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0); // h4 door line
+        glBegin(GL_LINES);
+        glVertex2i(705+50, 480-50);
+        glVertex2i(705+50, 510-50);
+        glVertex2i(690+50, 495-50);
+        glVertex2i(720+50, 495-50);
+        glEnd();
+        
+        
+        
+        
+        
+        glColor3f(0.431, 0.518, 0.576); // y axis road
+        glBegin(GL_QUADS);
+        glVertex2i(460,310);
+        glVertex2i(640,310);
+        glVertex2i(590,450);
+        glVertex2i(510,450);
+        glEnd();
+        glColor3f(1, 0.722, 0.188); // y axis road yellow line
+        glBegin(GL_QUADS);
+        glVertex2i(545+2,180);
+        glVertex2i(555-2,180);
+        glVertex2i(555-2,450);
+        glVertex2i(545+2,450);
+        glEnd();
+        glColor3f(1, 1, 1); // y axis road Zebra cross
+        glBegin(GL_QUADS);
+        glVertex2i(515-7,350);
+        glVertex2i(525-7,350);
+        glVertex2i(530-3,400);
+        glVertex2i(520-3,400);
+        glEnd();
+        glColor3f(1, 1, 1);
+        glBegin(GL_QUADS);
+        glVertex2i(590+1, 350); //y axis road zebra cross
+        glVertex2i(580+1, 350);
+        glVertex2i(571+1, 400);
+        glVertex2i(581+1, 400);
+        glEnd();
+        glColor3f(1, 1, 1);
+        glBegin(GL_QUADS);
+        glVertex2i(522, 430);
+        glVertex2i(532, 430);//y axis road zebra cross
+        glVertex2i(535, 450);
+        glVertex2i(525, 450);
+        glEnd();
+        glColor3f(1, 1, 1);
+        glBegin(GL_QUADS);
+        glVertex2i(522+40+5, 430);
+        glVertex2i(532+40+5, 430);
+        glVertex2i(535+40, 450);//y axis road zebra cross
+        glVertex2i(525+40, 450);
+        glEnd();
+        
+        
+        car();    //car
+        
+        car2();
+        
+        
+        glColor3f(0.949, 0.49, 0.612); // house5
+        glBegin(GL_QUADS);
+        glVertex2i(790,380);
+        glVertex2i(910,380);
+        glVertex2i(910,570);
+        glVertex2i(790,570);
+        glEnd();
+        glColor3f(1, 0.808, 0.408); // house5 roof
+        glBegin(GL_QUADS);
+        glVertex2i(790-5,570);
+        glVertex2i(910+5,570);
+        glVertex2i(910+5,580);
+        glVertex2i(790-5,580);
+        glEnd();
+        
+        glColor3f(0, 0.867, 0.886); // house5 door
+        glBegin(GL_QUADS);
+        glVertex2i(710+120, 380);
+        glVertex2i(750+120, 380);
+        glVertex2i(750+120, 420);
+        glVertex2i(710+120, 420);
+        glEnd();
+        glColor3f(1, 0.808, 0.408); // house5 board
+        glBegin(GL_QUADS);
+        glVertex2i(810,420);
+        glVertex2i(890,420);
+        glVertex2i(880,450);
+        glVertex2i(820,450);
+        glEnd();
+        glColor3f(1, 0.808, 0.408); // house5 door
+        glBegin(GL_QUADS);
+        glVertex2i(710+120, 380);
+        glVertex2i(750+120, 380);
+        glVertex2i(750+120, 390);
+        glVertex2i(710+120, 390);
+        glEnd();
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0); // h5 door line
+        glBegin(GL_LINES);
+        glVertex2i(850, 390);
+        glVertex2i(850, 420);
+        glEnd();
+        
+        
+        glColor3f(0.2, 0.824, 0.859); // house5 left glass
+        glBegin(GL_QUADS);
+        glVertex2i(810, 470);
+        glVertex2i(840, 470);
+        glVertex2i(840, 500);
+        glVertex2i(810, 500);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0); // h5 door line
+        glBegin(GL_LINES);
+        glVertex2i(825, 470);
+        glVertex2i(825, 500);
+        
+        glVertex2i(810, 485);
+        glVertex2i(840, 485);
+        glEnd();
+        glColor3f(0.2, 0.824, 0.859); // house5 left glass
+        glBegin(GL_QUADS);
+        glVertex2i(810, 470+50);
+        glVertex2i(840, 470+50);
+        glVertex2i(840, 500+50);
+        glVertex2i(810, 500+50);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0); // h5 door line
+        glBegin(GL_LINES);
+        glVertex2i(825, 470+50);
+        glVertex2i(825, 500+50);
+        
+        glVertex2i(810, 485+50);
+        glVertex2i(840, 485+50);
+        glEnd();
+        
+        
+        
+        glColor3f(0.2, 0.824, 0.859); // house5 right glass
+        glBegin(GL_QUADS);
+        glVertex2i(810+50, 470);
+        glVertex2i(840+50, 470);
+        glVertex2i(840+50, 500);
+        glVertex2i(810+50, 500);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0); // h5 door line
+        glBegin(GL_LINES);
+        glVertex2i(825+50, 470);
+        glVertex2i(825+50, 500);
+        
+        glVertex2i(810+50, 485);
+        glVertex2i(840+50, 485);
+        glEnd();
+        
+        glColor3f(0.2, 0.824, 0.859); // house5 right glass
+        glBegin(GL_QUADS);
+        glVertex2i(810+50, 470+50);
+        glVertex2i(840+50, 470+50);
+        glVertex2i(840+50, 500+50);
+        glVertex2i(810+50, 500+50);
+        glEnd();
+        
+        glLineWidth(2.0f);
+        glColor3f(0.02, 0.016, 0); // h5 door line
+        glBegin(GL_LINES);
+        glVertex2i(825+50, 470+50);
+        glVertex2i(825+50, 500+50);
+        
+        glVertex2i(810+50, 485+50);
+        glVertex2i(840+50, 485+50);
+        glEnd();
+        
+        
+    }
+    
+    glutSwapBuffers();
+    
+
+}
+
+// Main function
+int main(int argc, char* argv[]) {
+
+    // Initialize GLUT
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB); // Set display mode
+
+    glutInitWindowPosition(100, 100);    // Set window position
+    glutInitWindowSize(1200, 1100);        // Set window size
+    glutCreateWindow("project");  // Create display window
+
+    init();  // Execute initialization procedure
+
+    glutDisplayFunc(drawShapes);  // Call drawShapes function for display
+    glutSpecialFunc(key);
+    glutMainLoop();  // Start the main event loop
+
+    return 0;
+}
+
